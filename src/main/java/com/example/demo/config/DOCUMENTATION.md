@@ -83,3 +83,53 @@ public class OpenApiConfig {
 2. Не перегружай один конфиг-класс всем подряд.
 3. Используй profiles (`dev`, `test`, `prod`) и env-переменные.
 4. Для параметров используй `application.yaml` + `@ConfigurationProperties` (когда настроек много).
+
+---
+
+## Дополнение: новые конфиги безопасности и env binding
+
+После расширения проекта в `config` появились дополнительные инфраструктурные классы:
+
+### `SecurityConfig`
+
+Центральная настройка Spring Security:
+
+- stateless политика,
+- подключение JWT-фильтра,
+- endpoint authorization rules,
+- CORS, headers, 401/403 handlers.
+
+### `JwtProperties`
+
+Типобезопасная привязка параметров из `application.yaml`/env:
+
+- `app.jwt.issuer`
+- `app.jwt.secret`
+- `app.jwt.access-token-minutes`
+
+Плюс есть валидация (`@Validated`, `@NotBlank`, `@Min`) — это помогает упасть рано, если конфигурация неправильная.
+
+### `SecurityProperties`
+
+Хранит конфиг CORS списков:
+
+- origins
+- methods
+- headers
+- exposed headers
+
+Смысл: изменения окружения (dev/prod) можно делать без перекомпиляции приложения.
+
+---
+
+## Почему `@ConfigurationProperties` лучше для групп настроек
+
+Когда параметров много, лучше не использовать десятки `@Value`.
+
+Преимущества `@ConfigurationProperties`:
+
+1. группировка настроек в один класс,
+2. проще читать и поддерживать,
+3. удобнее валидировать,
+4. лучше автокомплит в IDE,
+5. проще писать документацию к настройкам.

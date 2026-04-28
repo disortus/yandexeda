@@ -2,8 +2,12 @@ package com.example.demo.entity;
 
 import java.time.LocalDateTime;
 
+import com.example.demo.enums.UserRole;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -22,15 +26,24 @@ public class User {
     @Column(nullable = false, unique = true, length = 120)
     private String email;
 
+    @Column(nullable = false, length = 100)
+    private String passwordHash;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private UserRole role;
+
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
     public User() {
     }
 
-    public User(String name, String email, LocalDateTime createdAt) {
+    public User(String name, String email, String passwordHash, UserRole role, LocalDateTime createdAt) {
         this.name = name;
         this.email = email;
+        this.passwordHash = passwordHash;
+        this.role = role;
         this.createdAt = createdAt;
     }
 
@@ -56,6 +69,22 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
+
+    public UserRole getRole() {
+        return role;
+    }
+
+    public void setRole(UserRole role) {
+        this.role = role;
     }
 
     public LocalDateTime getCreatedAt() {

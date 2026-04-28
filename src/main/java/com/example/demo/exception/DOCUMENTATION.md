@@ -60,3 +60,20 @@
 2. Возвращай корректные HTTP-коды (`400`, `404`, `409`, `500` и т.д.).
 3. Не возвращай stacktrace клиенту в production.
 4. Логируй технические детали на сервере, а клиенту отдавай безопасное сообщение.
+
+---
+
+## Дополнение: security ошибки (401/403)
+
+После внедрения Spring Security часть ошибок обрабатывается не только через `GlobalExceptionHandler`, но и через специализированные security handlers:
+
+- `RestAuthenticationEntryPoint` → `401 Unauthorized`
+- `RestAccessDeniedHandler` → `403 Forbidden`
+
+Зачем это нужно:
+
+1. security-ошибки возникают в filter chain до контроллера,
+2. `@RestControllerAdvice` их не всегда перехватит в нужной форме,
+3. отдельные handlers гарантируют единый JSON-ответ.
+
+Важно: формат ответа синхронизирован с общим контрактом `ApiErrorResponse` (status/code/message/path), чтобы клиенту было проще обрабатывать ошибки единообразно.

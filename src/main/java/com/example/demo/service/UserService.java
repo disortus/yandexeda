@@ -4,6 +4,7 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.UserCreateRequest;
@@ -18,11 +19,13 @@ import com.example.demo.validator.UserValidator;
 public class UserService {
     private final UserRepository repo;
     private final UserValidator validator;
+    private final PasswordEncoder passwordEncoder;
     private final Clock clock;
 
-    public UserService(UserRepository repo, UserValidator validator, Clock clock) {
+    public UserService(UserRepository repo, UserValidator validator, PasswordEncoder passwordEncoder, Clock clock) {
         this.repo = repo;
         this.validator = validator;
+        this.passwordEncoder = passwordEncoder;
         this.clock = clock;
     }
 
@@ -36,12 +39,22 @@ public class UserService {
         return toResponse(user);
     }
 
-    public UserResponse create(UserCreateRequest request) {
-        validator.validateForCreate(request);
+    public UserResponse getByEmail(String email) {
+        User user = repo.findByEmailIgnoreCase(EmailUtils.normalize(email))
+                .orElseThrow(() -> new ResourceNotFoundException("User with email '" + email + "' not found"));
+
+        return toResponse(user);
+    }
+
+    public UserResponse createByAdmin(UserCreateRequest request) {
+        String normalizedEmail = EmailUtils.normalize(request.getEmail());
+        validator.validateEmailUniqueness(normalizedEmail, request.getEmail());
 
         User user = new User();
         user.setName(request.getName().trim());
-        user.setEmail(EmailUtils.normalize(request.getEmail()));
+        user.setEmail(normalizedEmail);
+        user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
+        user.setRole(request.getRole());
         user.setCreatedAt(LocalDateTime.now(clock));
 
         User saved = repo.save(user);
@@ -53,6 +66,7 @@ public class UserService {
                 user.getId(),
                 user.getName(),
                 user.getEmail(),
+                user.getRole(),
                 user.getCreatedAt());
     }
 }

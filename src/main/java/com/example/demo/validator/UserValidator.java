@@ -2,10 +2,8 @@ package com.example.demo.validator;
 
 import org.springframework.stereotype.Component;
 
-import com.example.demo.dto.UserCreateRequest;
 import com.example.demo.exception.BusinessValidationException;
 import com.example.demo.repository.UserRepository;
-import com.example.demo.utils.EmailUtils;
 
 @Component
 public class UserValidator {
@@ -15,10 +13,9 @@ public class UserValidator {
         this.repo = repo;
     }
 
-    public void validateForCreate(UserCreateRequest request) {
-        String normalizedEmail = EmailUtils.normalize(request.getEmail());
+    public void validateEmailUniqueness(String normalizedEmail, String originalEmail) {
         if (repo.existsByEmailIgnoreCase(normalizedEmail)) {
-            throw new BusinessValidationException("User with email '" + request.getEmail() + "' already exists");
+            throw new BusinessValidationException("User with email '" + originalEmail + "' already exists");
         }
     }
 }

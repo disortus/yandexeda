@@ -71,3 +71,26 @@
 2. Не возвращай Entity наружу в зрелом проекте.
 3. Ошибки обрабатывай централизованно через `@RestControllerAdvice`.
 4. Нейминг методов делай как бизнес-действия: `createUser`, `getUserById`, `updateUser`.
+
+---
+
+## Дополнение: AuthController и role-aware endpoints
+
+Проект расширен вторым контроллером — `AuthController`:
+
+- `POST /auth/register`
+- `POST /auth/login`
+
+### Что важно понимать
+
+1. Эти endpoint'ы публичные (без JWT),
+2. они возвращают `AuthResponse` с access token,
+3. дальше клиент использует токен в `Authorization` заголовке.
+
+Также в `UserController` теперь есть role-aware ограничения:
+
+- часть endpoint'ов доступна только `ADMIN`,
+- часть — `ADMIN` и `COURIER`,
+- `GET /users/me` для любого аутентифицированного пользователя.
+
+Это хороший пример, как controller слой остаётся "тонким", но при этом явно выражает security-контракт API.

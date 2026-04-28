@@ -115,3 +115,103 @@ curl http://localhost:8080/users
 7. `RequestLoggingFilter`
 
 После этого переходи к `config` и `utils`
+
+---
+
+## 7) Большое обновление учебного проекта (JWT, роли, security, профили БД, тесты)
+
+Ниже перечислено, что добавлено сверх базового CRUD-примера, чтобы проект был максимально полезен для изучения Spring Boot с нуля и до production-like подхода.
+
+### 7.1 Аутентификация и роли
+
+Добавлены auth endpoints:
+
+- `POST /auth/register` — регистрация пользователя (роль по умолчанию `CUSTOMER`)
+- `POST /auth/login` — вход и получение JWT
+
+Роли:
+
+- `CUSTOMER`
+- `ADMIN`
+- `COURIER`
+
+Роль хранится в enum и в БД, а права доступа ограничиваются через Spring Security и `@PreAuthorize`.
+
+### 7.2 Swagger / OpenAPI
+
+Теперь API полноценно документировано:
+
+- схемы request/response DTO,
+- ошибки (`ApiErrorResponse`),
+- security scheme `bearerAuth` для JWT,
+- теги и описания всех ручек.
+
+Swagger UI:
+
+- `http://localhost:8080/swagger-ui.html`
+
+Подробный гайд по Swagger:
+
+- `./DOCUMENTATION.md`
+
+### 7.3 Конфигурация через env
+
+Добавлено:
+
+- `.env.example` как шаблон,
+- загрузка `.env` через `spring.config.import`,
+- привязка параметров к `@ConfigurationProperties` (`JwtProperties`, `SecurityProperties`).
+
+### 7.4 Профили БД
+
+В `application.yaml` теперь разделение по профилям:
+
+- `dev` → PostgreSQL
+- `prod` → PostgreSQL (облако)
+- `test` → SQLite
+
+Это сделано, чтобы тесты не зависели от доступности облачной БД.
+
+### 7.5 Security hardening
+
+В проекте настроены:
+
+- stateless JWT security,
+- BCrypt password hashing,
+- role-based authorization,
+- CORS из конфигурации,
+- security headers,
+- единый JSON-ответ для 401/403.
+
+Подробно по security:
+
+- `src/main/java/com/example/demo/security/DOCUMENTATION.md`
+
+### 7.6 Тестовая стратегия
+
+Добавлены разные виды тестов:
+
+- unit (service/validator/utils),
+- web (контракт контроллера),
+- integration (auth flow, authorization, repository),
+- context load.
+
+Подробно по тестам:
+
+- `src/test/DOCUMENTATION.md`
+
+---
+
+## 8) Важные дополнительные документы
+
+- `DOCUMENTATION.md` — подробная методика Swagger/OpenAPI
+- `src/main/resources/DOCUMENTATION.md` — как устроен `application.yaml`, профили и env
+- `src/main/java/com/example/demo/enums/DOCUMENTATION.md` — зачем enums и как их развивать
+- `src/main/java/com/example/demo/security/DOCUMENTATION.md` — глубокое объяснение security-слоя
+
+---
+
+## 9) Примечание по старым разделам README
+
+Если ты видишь в ранних разделах упоминание H2 как "по умолчанию" — ориентируйся на обновлённую конфигурацию:  
+для тестов используется SQLite, а для dev/prod — PostgreSQL по профилям.

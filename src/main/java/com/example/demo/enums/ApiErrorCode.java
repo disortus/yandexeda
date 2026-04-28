@@ -1,0 +1,10 @@
+package com.example.demo.enums;
+
+public enum ApiErrorCode {
+    RESOURCE_NOT_FOUND,
+    BUSINESS_VALIDATION,
+    REQUEST_VALIDATION,
+    AUTHENTICATION_FAILED,
+    ACCESS_DENIED,
+    INTERNAL_ERROR
+}

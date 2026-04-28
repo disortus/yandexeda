@@ -3,6 +3,7 @@ package com.example.demo.middleware;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,12 +24,16 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
+        String requestId = UUID.randomUUID().toString();
+        request.setAttribute("requestId", requestId);
+        response.setHeader("X-Request-Id", requestId);
+
         Instant start = Instant.now();
         try {
             filterChain.doFilter(request, response);
         } finally {
             long durationMs = Duration.between(start, Instant.now()).toMillis();
-            log.info("{} {} -> {} ({} ms)", request.getMethod(), request.getRequestURI(), response.getStatus(), durationMs);
+            log.info("[{}] {} {} -> {} ({} ms)", requestId, request.getMethod(), request.getRequestURI(), response.getStatus(), durationMs);
         }
     }
 }
