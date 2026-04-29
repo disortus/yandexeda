@@ -92,3 +92,7 @@ X-Request-Id: 2f6c1f5d-...
 - URI,
 - status,
 - duration.
+
+## Дальше читать
+
+Следующий документ: `src/main/java/com/example/demo/config/DOCUMENTATION.md`.

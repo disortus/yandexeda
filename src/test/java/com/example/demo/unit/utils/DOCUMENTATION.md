@@ -27,3 +27,7 @@ Email используется как логин и JWT subject. Если где
 
 - DTO validation отклоняет плохой пользовательский ввод,
 - utility-функция остаётся безопасной при прямом вызове из Java-кода.
+
+## Дальше читать
+
+Следующий документ: `src/test/java/com/example/demo/unit/validator/DOCUMENTATION.md`.

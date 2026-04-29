@@ -167,3 +167,7 @@ Best practice: не добавлять конфиг "на всякий случ�
 Изначально была RC-версия Spring Boot 4.1.0-RC1. Это привело к runtime-проблеме Swagger/OpenAPI: `/v3/api-docs` падал с `NoSuchMethodError`.
 
 Для учебного проекта важнее стабильность и предсказуемость, поэтому теперь используется Spring Boot `3.4.5` и springdoc `2.8.6`. Это снижает риск несовместимостей и позволяет изучать Spring Boot, а не особенности release candidate зависимостей.
+
+## Дальше читать
+
+Следующий документ: `src/main/java/com/example/demo/security/DOCUMENTATION.md`.

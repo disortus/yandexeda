@@ -49,3 +49,7 @@ class DemoApplicationTests {
 5. `e2e/` — посмотри полный сценарий через настоящий HTTP server.
 
 Такой порядок повторяет рост уверенности: от маленьких деталей к целому приложению.
+
+## Дальше читать
+
+Следующий документ: `src/test/java/com/example/demo/unit/DOCUMENTATION.md`.

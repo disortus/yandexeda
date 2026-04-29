@@ -78,3 +78,7 @@ validator.validateEmailUniqueness(normalizedEmail, request.getEmail());
 `400` означает "запрос плохо сформирован": например, email не похож на email или пароль слишком короткий.
 
 `409` означает "запрос понятен и валиден, но его нельзя выполнить из-за конфликта состояния": например, пользователь с таким email уже есть.
+
+## Дальше читать
+
+Следующий документ: `src/main/java/com/example/demo/utils/DOCUMENTATION.md`.

@@ -170,3 +170,7 @@ public UserResponse getMe(@Parameter(hidden = true) Principal principal)
 | `GET` | `/users` | `UserController` | `ADMIN`, `COURIER` | список `UserResponse` |
 | `GET` | `/users/{id}` | `UserController` | `ADMIN`, `COURIER` | `UserResponse` по id |
 | `POST` | `/users` | `UserController` | `ADMIN` | созданный `UserResponse` |
+
+## Дальше читать
+
+Следующий документ: `src/main/java/com/example/demo/dto/DOCUMENTATION.md`.

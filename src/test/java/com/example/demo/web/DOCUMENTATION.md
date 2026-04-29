@@ -53,3 +53,7 @@ Standalone `MockMvc` не поднимает полноценный Spring Secur
 
 - web проверяет HTTP/JSON/validation контракт,
 - integration проверяет security и связку слоёв.
+
+## Дальше читать
+
+Следующий документ: `src/test/java/com/example/demo/integration/DOCUMENTATION.md`.

@@ -86,3 +86,7 @@ private UserRole role;
 Так в БД сохраняется `CUSTOMER`, `ADMIN` или `COURIER`, а не числовой индекс enum.
 
 Это безопаснее для развития проекта: если поменять порядок enum-констант, данные в БД не "переедут" на другую роль.
+
+## Дальше читать
+
+Следующий документ: `src/main/java/com/example/demo/enums/DOCUMENTATION.md`.

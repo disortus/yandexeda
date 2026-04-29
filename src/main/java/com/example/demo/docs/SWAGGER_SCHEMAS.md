@@ -379,3 +379,7 @@ GET /status
 - учебный технический endpoint можно оставить без Swagger-аннотаций,
 - публичные бизнес endpoints должны иметь подробные Swagger annotations,
 - request/response DTO бизнес endpoints должны иметь понятные schemas.
+
+## Дальше читать
+
+Следующий документ: `src/main/resources/DOCUMENTATION.md`.

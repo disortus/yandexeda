@@ -62,3 +62,7 @@ DTO — это внешний API-контракт. Даже если DTO отн
 - `ChangePasswordRequest`.
 
 Но не стоит заранее добавлять пустые DTO "на будущее". Хорошая структура растёт вместе с реальными use-cases.
+
+## Дальше читать
+
+Следующий документ: `src/main/java/com/example/demo/entity/DOCUMENTATION.md`.

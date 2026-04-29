@@ -44,3 +44,7 @@ Integration и e2e показывают, что система работает 
 - сложная подготовка application context.
 
 Если тесту нужен Spring context, это уже integration/web/e2e уровень. Такое разделение делает тесты быстрее и понятнее.
+
+## Дальше читать
+
+Следующий документ: `src/test/java/com/example/demo/unit/utils/DOCUMENTATION.md`.

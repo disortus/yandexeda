@@ -295,3 +295,68 @@ Swagger UI:
 - `utils` хранит только нейтральные чистые helper-функции.
 
 Security не надо массово переносить в `utils`: JWT-фильтр, `UserDetailsService`, entry point и access denied handler — это не утилиты, а часть security-инфраструктуры. В `utils` уместны только маленькие stateless функции вроде `EmailUtils.normalize`.
+
+---
+
+## 12) Roadmap чтения документации
+
+Этот проект теперь можно читать как учебный курс: сначала простые `example/`, потом настоящую production-like реализацию.
+
+### Шаг 1. Общая карта
+
+1. `README.md` — что есть в проекте и как его запускать.
+2. `src/main/java/com/example/demo/DOCUMENTATION.md` — как устроен Spring Boot проект и request lifecycle.
+
+### Шаг 2. Простые example-версии слоёв
+
+3. `src/main/java/com/example/demo/controller/example/DOCUMENTATION.md`
+4. `src/main/java/com/example/demo/dto/example/DOCUMENTATION.md`
+5. `src/main/java/com/example/demo/service/example/DOCUMENTATION.md`
+6. `src/main/java/com/example/demo/validator/example/DOCUMENTATION.md`
+7. `src/main/java/com/example/demo/utils/example/DOCUMENTATION.md`
+8. `src/main/java/com/example/demo/exception/example/DOCUMENTATION.md`
+9. `src/main/java/com/example/demo/entity/example/DOCUMENTATION.md`
+10. `src/main/java/com/example/demo/enums/example/DOCUMENTATION.md`
+11. `src/main/java/com/example/demo/repository/example/DOCUMENTATION.md`
+12. `src/main/java/com/example/demo/config/example/DOCUMENTATION.md`
+13. `src/main/java/com/example/demo/middleware/example/DOCUMENTATION.md`
+14. `src/main/java/com/example/demo/security/example/DOCUMENTATION.md`
+15. `src/main/java/com/example/demo/docs/example/DOCUMENTATION.md`
+
+### Шаг 3. Основные production-like слои
+
+16. `src/main/java/com/example/demo/controller/DOCUMENTATION.md`
+17. `src/main/java/com/example/demo/dto/DOCUMENTATION.md`
+18. `src/main/java/com/example/demo/dto/auth/DOCUMENTATION.md`
+19. `src/main/java/com/example/demo/entity/DOCUMENTATION.md`
+20. `src/main/java/com/example/demo/enums/DOCUMENTATION.md`
+21. `src/main/java/com/example/demo/repository/DOCUMENTATION.md`
+22. `src/main/java/com/example/demo/service/DOCUMENTATION.md`
+23. `src/main/java/com/example/demo/validator/DOCUMENTATION.md`
+24. `src/main/java/com/example/demo/utils/DOCUMENTATION.md`
+25. `src/main/java/com/example/demo/exception/DOCUMENTATION.md`
+26. `src/main/java/com/example/demo/middleware/DOCUMENTATION.md`
+27. `src/main/java/com/example/demo/config/DOCUMENTATION.md`
+28. `src/main/java/com/example/demo/security/DOCUMENTATION.md`
+
+### Шаг 4. Swagger, env и тесты
+
+29. `DOCUMENTATION.md` — Swagger/OpenAPI guide.
+30. `src/main/java/com/example/demo/docs/DOCUMENTATION.md`
+31. `src/main/java/com/example/demo/docs/SWAGGER_SCHEMAS.md`
+32. `src/main/resources/DOCUMENTATION.md`
+33. `src/test/DOCUMENTATION.md`
+34. `src/test/java/com/example/demo/DOCUMENTATION.md`
+35. `src/test/java/com/example/demo/unit/DOCUMENTATION.md`
+36. `src/test/java/com/example/demo/unit/utils/DOCUMENTATION.md`
+37. `src/test/java/com/example/demo/unit/validator/DOCUMENTATION.md`
+38. `src/test/java/com/example/demo/unit/service/DOCUMENTATION.md`
+39. `src/test/java/com/example/demo/web/DOCUMENTATION.md`
+40. `src/test/java/com/example/demo/integration/DOCUMENTATION.md`
+41. `src/test/java/com/example/demo/e2e/DOCUMENTATION.md`
+
+### Шаг 5. Дополнительно
+
+42. `HELP.md` — стандартные ссылки Spring Initializr/Gradle.
+
+**Дальше читать:** `src/main/java/com/example/demo/DOCUMENTATION.md`.

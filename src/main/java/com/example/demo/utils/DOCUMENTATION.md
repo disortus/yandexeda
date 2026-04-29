@@ -73,3 +73,7 @@ Utils — для небольших общих helper-функций.
 - repository helpers с доступом к БД.
 
 Если класс зависит от Spring MVC, Security, JPA или конкретного DTO ошибки — это почти наверняка не `utils`, а часть соответствующего слоя.
+
+## Дальше читать
+
+Следующий документ: `src/main/java/com/example/demo/exception/DOCUMENTATION.md`.

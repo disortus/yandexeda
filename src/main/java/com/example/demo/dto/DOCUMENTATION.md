@@ -162,3 +162,7 @@ Response DTO (`UserResponse`, `AuthResponse`, `ApiErrorResponse`, `FieldValidati
 2. реалистичны ли `example`,
 3. соответствуют ли `@Size`, `@Pattern`, `@Email` реальным бизнес-правилам,
 4. не попало ли в response чувствительное поле вроде `passwordHash`.
+
+## Дальше читать
+
+Следующий документ: `src/main/java/com/example/demo/dto/auth/DOCUMENTATION.md`.

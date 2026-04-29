@@ -254,3 +254,7 @@ class AuthFlowIntegrationTest {
 - context bootstrap.
 
 Это уже хороший фундамент для изучения TDD/BDD-подходов и безопасного развития функциональности без страха сломать существующее поведение.
+
+## Дальше читать
+
+Следующий документ: `src/test/java/com/example/demo/DOCUMENTATION.md`.

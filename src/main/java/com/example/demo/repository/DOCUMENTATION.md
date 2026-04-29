@@ -93,3 +93,7 @@ Repository не решает, какой HTTP-статус вернуть. Он 
 - `findByEmailIgnoreCase`.
 
 `@Query` стоит добавлять тогда, когда имя метода становится нечитаемым или нужен явно контролируемый JPQL/SQL. Для учебного проекта важно сначала освоить query methods: это одна из сильных сторон Spring Data JPA.
+
+## Дальше читать
+
+Следующий документ: `src/main/java/com/example/demo/service/DOCUMENTATION.md`.

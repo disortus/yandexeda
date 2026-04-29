@@ -394,3 +394,7 @@ Swagger отвечает на вопрос:
 - чем отличаются DTO с `@Schema` и без `@Schema`,
 - почему `StatusController` виден в OpenAPI даже без Swagger-аннотаций,
 - какие schemas сейчас есть в проекте.
+
+## Дальше читать
+
+Следующий документ: `src/main/java/com/example/demo/docs/DOCUMENTATION.md`.

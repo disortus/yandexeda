@@ -23,3 +23,7 @@ src/main/java/com/example/demo/docs/
 Markdown-файлы в `src/main/java` не становятся Spring beans и не участвуют в runtime-логике. Это просто файлы документации в репозитории.
 
 Если позже проект будет упаковываться в jar, такие файлы могут попасть в исходники, но они не влияют на контроллеры, сервисы, JPA, security или Swagger.
+
+## Дальше читать
+
+Следующий документ: `src/main/java/com/example/demo/docs/SWAGGER_SCHEMAS.md`.

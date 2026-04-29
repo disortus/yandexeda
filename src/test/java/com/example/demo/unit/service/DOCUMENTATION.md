@@ -50,3 +50,7 @@ when(clock.getZone()).thenReturn(ZoneOffset.UTC);
 ```
 
 Так тест не зависит от текущего времени на машине и остаётся детерминированным.
+
+## Дальше читать
+
+Следующий документ: `src/test/java/com/example/demo/web/DOCUMENTATION.md`.

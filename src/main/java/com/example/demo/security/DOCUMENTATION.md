@@ -256,3 +256,7 @@ public RestAuthenticationEntryPoint(ObjectMapper objectMapper, ApiErrorResponseF
 - e2e-сценарий проходит регистрацию, логин admin, создание courier и ошибки `401/403/409`.
 
 Это полезно для обучения: security лучше изучать не только по конфигу, но и по тестам, где видно реальное поведение системы.
+
+## Дальше читать
+
+Следующий документ: `DOCUMENTATION.md`.

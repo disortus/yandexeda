@@ -120,3 +120,7 @@
 2. читает или сохраняет `User` через `UserRepository`,
 3. использует `UserValidator` для бизнес-проверок,
 4. маппит entity в `UserResponse`.
+
+## Дальше читать
+
+Следующий документ: `src/main/java/com/example/demo/validator/DOCUMENTATION.md`.

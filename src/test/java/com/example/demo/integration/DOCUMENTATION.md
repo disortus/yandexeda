@@ -49,3 +49,7 @@ passwordEncoder.encode("Qwerty123!")
 ```
 
 Это важная деталь: если сохранить `"Qwerty123!"` напрямую, `PasswordEncoder.matches(...)` вернёт `false`, и тест будет падать не из-за security-роли, а из-за неправильной подготовки данных.
+
+## Дальше читать
+
+Следующий документ: `src/test/java/com/example/demo/e2e/DOCUMENTATION.md`.

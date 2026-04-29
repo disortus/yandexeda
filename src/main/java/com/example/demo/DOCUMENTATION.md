@@ -295,3 +295,7 @@ Spring создаёт объекты (бины) и связывает их ме�
 | Класс маленький, stateless и не знает о Spring/JPA/Security? | `utils` |
 
 Если класс подходит сразу под несколько строк, это сигнал внимательно посмотреть на ответственность. Например, `ValidationErrorUtils` выглядит как "утилита", но знает о `BindingResult` и `FieldValidationError`, поэтому правильно лежит в `exception`.
+
+## Дальше читать
+
+Следующий документ: `src/main/java/com/example/demo/controller/example/DOCUMENTATION.md`.
