@@ -42,6 +42,7 @@ Enum — это отличный инструмент для учебного и
 Единые коды ошибок, которые возвращаются клиенту в `ApiErrorResponse.code`:
 
 - `RESOURCE_NOT_FOUND`
+- `RESOURCE_ALREADY_EXISTS`
 - `BUSINESS_VALIDATION`
 - `REQUEST_VALIDATION`
 - `AUTHENTICATION_FAILED`

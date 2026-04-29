@@ -9,7 +9,7 @@ import org.mockito.Mock;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.example.demo.exception.BusinessValidationException;
+import com.example.demo.exception.ResourceAlreadyExistsException;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.validator.UserValidator;
 
@@ -27,7 +27,7 @@ class UserValidatorTest {
         when(userRepository.existsByEmailIgnoreCase("alice@example.com")).thenReturn(true);
 
         assertThatThrownBy(() -> userValidator.validateEmailUniqueness("alice@example.com", "Alice@Example.com"))
-                .isInstanceOf(BusinessValidationException.class)
+                .isInstanceOf(ResourceAlreadyExistsException.class)
                 .hasMessageContaining("already exists");
     }
 

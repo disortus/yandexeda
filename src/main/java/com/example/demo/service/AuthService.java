@@ -6,6 +6,7 @@ import java.time.ZoneOffset;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.dto.UserResponse;
 import com.example.demo.dto.auth.AuthResponse;
@@ -41,6 +42,7 @@ public class AuthService {
         this.clock = clock;
     }
 
+    @Transactional
     public AuthResponse register(RegisterRequest request) {
         String normalizedEmail = EmailUtils.normalize(request.getEmail());
         userValidator.validateEmailUniqueness(normalizedEmail, request.getEmail());
@@ -56,6 +58,7 @@ public class AuthService {
         return buildAuthResponse(saved);
     }
 
+    @Transactional(readOnly = true)
     public AuthResponse login(LoginRequest request) {
         String normalizedEmail = EmailUtils.normalize(request.getEmail());
         User user = userRepository.findByEmailIgnoreCase(normalizedEmail)

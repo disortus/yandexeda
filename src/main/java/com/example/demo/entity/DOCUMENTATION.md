@@ -25,7 +25,7 @@ Primary key сущности.
 ### `@GeneratedValue(strategy = GenerationType.IDENTITY)`
 Автогенерация id базой данных.
 
-`IDENTITY` хорошо подходит для PostgreSQL/H2 с автоинкрементом.
+`IDENTITY` хорошо подходит для PostgreSQL с автоинкрементом; в тестах Hibernate адаптирует стратегию под SQLite-диалект.
 
 ### `@Column(...)`
 Управляет колонкой БД:
@@ -50,5 +50,39 @@ Primary key сущности.
 - `id` — primary key
 - `name` — обязательное поле длиной до 50
 - `email` — обязательное уникальное поле
+- `passwordHash` — BCrypt-хэш пароля, а не исходный пароль
+- `role` — роль пользователя (`CUSTOMER`, `ADMIN`, `COURIER`) как `EnumType.STRING`
 - `createdAt` — дата создания записи
 
+---
+
+## Почему в Entity есть `passwordHash`, но его нет в DTO ответа
+
+`passwordHash` нужен приложению, чтобы проверять пароль при логине:
+
+```java
+passwordEncoder.matches(rawPassword, user.getPasswordHash())
+```
+
+Но это поле нельзя отдавать клиенту. Даже хэш пароля является чувствительной информацией: при утечке response/logs злоумышленник получает материал для offline brute-force атаки.
+
+Поэтому:
+
+- entity хранит `passwordHash`,
+- `UserResponse` его не содержит,
+- controller возвращает DTO, а не entity.
+
+Это один из главных смыслов разделения `entity` и `dto`.
+
+## Почему роль хранится как строка
+
+В entity используется:
+
+```java
+@Enumerated(EnumType.STRING)
+private UserRole role;
+```
+
+Так в БД сохраняется `CUSTOMER`, `ADMIN` или `COURIER`, а не числовой индекс enum.
+
+Это безопаснее для развития проекта: если поменять порядок enum-констант, данные в БД не "переедут" на другую роль.

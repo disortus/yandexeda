@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.dto.UserCreateRequest;
 import com.example.demo.dto.UserResponse;
@@ -29,16 +30,19 @@ public class UserService {
         this.clock = clock;
     }
 
+    @Transactional(readOnly = true)
     public List<UserResponse> getAll() {
         return repo.findAll().stream().map(this::toResponse).toList();
     }
 
+    @Transactional(readOnly = true)
     public UserResponse getById(Long id) {
         User user = repo.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User with id " + id + " not found"));
         return toResponse(user);
     }
 
+    @Transactional(readOnly = true)
     public UserResponse getByEmail(String email) {
         User user = repo.findByEmailIgnoreCase(EmailUtils.normalize(email))
                 .orElseThrow(() -> new ResourceNotFoundException("User with email '" + email + "' not found"));
@@ -46,6 +50,7 @@ public class UserService {
         return toResponse(user);
     }
 
+    @Transactional
     public UserResponse createByAdmin(UserCreateRequest request) {
         String normalizedEmail = EmailUtils.normalize(request.getEmail());
         validator.validateEmailUniqueness(normalizedEmail, request.getEmail());

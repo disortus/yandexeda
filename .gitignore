@@ -38,3 +38,11 @@ out/
 
 # Local environment variables
 .env
+
+# Generated local SQLite databases
+*.db
+*.sqlite
+*.sqlite3
+
+# AI agents
+.codex

@@ -72,9 +72,9 @@ spring:
       on-profile: prod
 
   datasource:
-    url: ${PROD_DB_URL:jdbc:postgresql://localhost:5432/demo_prod}
-    username: ${PROD_DB_USER:postgres}
-    password: ${PROD_DB_PASS:postgres}
+    url: ${PROD_DB_URL}
+    username: ${PROD_DB_USER}
+    password: ${PROD_DB_PASS}
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: ${PROD_DB_POOL_MAX_SIZE:20}
@@ -85,6 +85,10 @@ spring:
       ddl-auto: validate
     show-sql: false
 
+app:
+  jwt:
+    secret: ${JWT_SECRET}
+
 ---
 spring:
   config:
@@ -92,7 +96,7 @@ spring:
       on-profile: test
 
   datasource:
-    url: ${TEST_DB_URL:jdbc:sqlite:file:./demo-test.db}
+    url: ${TEST_DB_URL:jdbc:sqlite:file:demo-test?mode=memory&cache=shared}
     username: ${TEST_DB_USER:}
     password: ${TEST_DB_PASS:}
     driver-class-name: org.sqlite.JDBC

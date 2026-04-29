@@ -261,3 +261,132 @@ SPRING_PROFILES_ACTIVE=prod ./gradlew bootRun
 Через него ты отделяешь код от окружения, делаешь приложение переносимым, безопасным и удобным для сопровождения.
 
 Для учебного проекта это особенно важно: правильная конфигурация с самого начала закладывает архитектурную дисциплину, которая потом масштабируется на боевые сервисы.
+
+
+---
+
+## 13. Актуализация тестовой SQLite-конфигурации
+
+Раньше тестовый профиль мог использовать файл `./demo-test.db`. Это работает, но создаёт неприятный эффект: после запуска тестов локальный бинарный файл меняется и попадает в `git status`.
+
+Теперь тестовая БД настроена как in-memory SQLite:
+
+```yaml
+spring:
+  datasource:
+    url: ${TEST_DB_URL:jdbc:sqlite:file:demo-test?mode=memory&cache=shared}
+```
+
+Что означают параметры:
+
+- `file:demo-test` — именованная SQLite database,
+- `mode=memory` — хранить данные в памяти, а не в файле,
+- `cache=shared` — разрешить нескольким соединениям обращаться к одной in-memory DB в рамках процесса.
+
+Почему это удобно:
+
+1. тесты не создают `demo-test.db`,
+2. репозиторий остаётся чистым,
+3. CI не должен чистить временные файлы,
+4. тестовая БД всё ещё настоящая JDBC SQLite, а не mock.
+
+Дополнительно `.gitignore` содержит:
+
+```gitignore
+*.db
+*.sqlite
+*.sqlite3
+```
+
+---
+
+## 14. Актуализация Swagger-зависимостей
+
+Swagger/OpenAPI зависит не только от аннотаций, но и от совместимости библиотек. В проекте используется стабильная связка:
+
+```gradle
+id 'org.springframework.boot' version '3.4.5'
+implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6'
+```
+
+Если обновляешь Spring Boot major/minor версию, обязательно проверяй:
+
+1. `/v3/api-docs` возвращает `200`,
+2. `/swagger-ui.html` открывается,
+3. e2e/интеграционные тесты проходят,
+4. нет `NoSuchMethodError`/`ClassNotFoundException` в логах.
+
+---
+
+## 15. Важная production-правка: prod не должен стартовать с учебными секретами
+
+В общей секции `application.yaml` есть dev-friendly значения по умолчанию. Они удобны для обучения и локального запуска, но опасны для production.
+
+Поэтому в `prod` профиле критичные параметры переопределены без default-значений:
+
+```yaml
+spring:
+  datasource:
+    url: ${PROD_DB_URL}
+    username: ${PROD_DB_USER}
+    password: ${PROD_DB_PASS}
+
+app:
+  jwt:
+    secret: ${JWT_SECRET}
+```
+
+Что это значит:
+
+- `dev` может стартовать с локальными учебными default-значениями,
+- `test` может стартовать с SQLite default-значением,
+- `prod` обязан получить реальные переменные окружения,
+- если `JWT_SECRET` или `PROD_DB_URL` не заданы, приложение не должно тихо использовать учебную заглушку.
+
+Это важная security-практика: лучше упасть на старте, чем случайно поднять production с предсказуемым секретом.
+
+## 16. Таблица основных переменных окружения
+
+| Переменная | Где используется | Обязательна в prod | Для чего нужна |
+| --- | --- | --- | --- |
+| `SPRING_PROFILES_ACTIVE` | `spring.profiles.active` | да | выбирает профиль `dev`, `prod` или `test` |
+| `APP_NAME` | `spring.application.name` | нет | имя приложения в логах/метаданных |
+| `SERVER_PORT` | `server.port` | нет | порт HTTP-сервера |
+| `JWT_ISSUER` | `app.jwt.issuer` | желательно | issuer в JWT |
+| `JWT_SECRET` | `app.jwt.secret` | да | секрет подписи JWT |
+| `JWT_ACCESS_TOKEN_MINUTES` | `app.jwt.access-token-minutes` | нет | срок жизни access token |
+| `CORS_ALLOWED_ORIGINS` | `app.security.cors-allowed-origins` | да | список frontend origin |
+| `DEV_DB_URL` | dev datasource | нет | локальная PostgreSQL |
+| `PROD_DB_URL` | prod datasource | да | облачная PostgreSQL |
+| `PROD_DB_USER` | prod datasource | да | пользователь облачной БД |
+| `PROD_DB_PASS` | prod datasource | да | пароль облачной БД |
+| `TEST_DB_URL` | test datasource | нет | SQLite для автотестов |
+
+## 17. Как Spring выбирает значение `${ENV:default}`
+
+Запись:
+
+```yaml
+server:
+  port: ${SERVER_PORT:8080}
+```
+
+читается так:
+
+1. попробуй найти переменную окружения `SERVER_PORT`,
+2. если она есть — используй её,
+3. если её нет — используй `8080`.
+
+Запись без default:
+
+```yaml
+url: ${PROD_DB_URL}
+```
+
+читается строже:
+
+1. переменная `PROD_DB_URL` обязана существовать,
+2. если её нет, конфигурация считается неправильной,
+3. приложение падает на старте.
+
+В учебном проекте это помогает увидеть разницу между удобством dev-среды и безопасностью production-среды.

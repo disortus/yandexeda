@@ -2,6 +2,7 @@ package com.example.demo.enums;
 
 public enum ApiErrorCode {
     RESOURCE_NOT_FOUND,
+    RESOURCE_ALREADY_EXISTS,
     BUSINESS_VALIDATION,
     REQUEST_VALIDATION,
     AUTHENTICATION_FAILED,

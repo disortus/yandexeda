@@ -59,7 +59,8 @@
 
 - `GET /users` -> `service.getAll()`
 - `GET /users/{id}` -> `service.getById(id)`
-- `POST /users` -> `service.create(request)`
+- `GET /users/me` -> `service.getByEmail(principal.getName())`
+- `POST /users` -> `service.createByAdmin(request)`
 
 Для `POST` используется `@Valid @RequestBody UserCreateRequest` и возвращается `201 Created`.
 
@@ -94,3 +95,71 @@
 - `GET /users/me` для любого аутентифицированного пользователя.
 
 Это хороший пример, как controller слой остаётся "тонким", но при этом явно выражает security-контракт API.
+
+---
+
+## Подробно: как читать аннотации в контроллерах проекта
+
+### `@Tag`
+
+`@Tag` относится к Swagger/OpenAPI. Он группирует ручки в Swagger UI:
+
+- `Authentication` — регистрация и логин,
+- `Users` — операции с пользователями.
+
+Это не влияет на runtime-логику приложения, но сильно влияет на читаемость API-документации.
+
+### `@Operation`
+
+`@Operation(summary = ..., description = ...)` описывает конкретную ручку:
+
+- `summary` — короткое название,
+- `description` — подробное объяснение бизнес-смысла.
+
+Хорошее правило: `summary` отвечает на вопрос "что делает ручка", а `description` отвечает на вопрос "когда и зачем её использовать".
+
+### `@ApiResponses` и `@ApiResponse`
+
+Эти аннотации описывают возможные HTTP-ответы:
+
+- успешные (`200`, `201`),
+- ошибки входных данных (`400`),
+- ошибки авторизации (`401`),
+- ошибки прав (`403`),
+- отсутствие ресурса (`404`),
+- конфликт состояния (`409`).
+
+В проекте для ошибок везде используется `ApiErrorResponse`, чтобы Swagger показывал один и тот же error contract.
+
+### `@PreAuthorize`
+
+`@PreAuthorize` — это method-level security. Например:
+
+```java
+@PreAuthorize("hasAnyRole('ADMIN','COURIER')")
+```
+
+Такой код читается прямо как правило доступа: метод можно вызвать только пользователю с ролью `ADMIN` или `COURIER`.
+
+### `@Parameter(hidden = true)`
+
+В `GET /users/me` параметр `Principal` приходит не из JSON и не из URL. Его подставляет Spring Security из текущего `Authentication`. Поэтому он скрыт из Swagger:
+
+```java
+public UserResponse getMe(@Parameter(hidden = true) Principal principal)
+```
+
+Если не скрыть такой параметр, Swagger может показать его как будто клиент должен сам отправлять `principal`, а это неверно.
+
+---
+
+## Актуальная таблица endpoints
+
+| Method | Path | Controller | Доступ | Что возвращает |
+| --- | --- | --- | --- | --- |
+| `POST` | `/auth/register` | `AuthController` | публично | `AuthResponse` с JWT и пользователем |
+| `POST` | `/auth/login` | `AuthController` | публично | `AuthResponse` с JWT и пользователем |
+| `GET` | `/users/me` | `UserController` | любой authenticated | `UserResponse` текущего пользователя |
+| `GET` | `/users` | `UserController` | `ADMIN`, `COURIER` | список `UserResponse` |
+| `GET` | `/users/{id}` | `UserController` | `ADMIN`, `COURIER` | `UserResponse` по id |
+| `POST` | `/users` | `UserController` | `ADMIN` | созданный `UserResponse` |

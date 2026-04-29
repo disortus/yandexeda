@@ -14,11 +14,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.example.demo.entity.User;
+import com.example.demo.enums.ApiErrorCode;
 import com.example.demo.enums.UserRole;
 import com.example.demo.repository.UserRepository;
 import com.jayway.jsonpath.JsonPath;
@@ -57,6 +59,16 @@ class SecurityAuthorizationIntegrationTest {
                         .header("Authorization", "Bearer " + customerToken))
                 .andExpect(status().isForbidden());
 
+        User courier = new User("Courier", "courier@example.com", passwordEncoder.encode("Qwerty123!"), UserRole.COURIER,
+                LocalDateTime.now());
+        userRepository.save(courier);
+
+        String courierToken = loginAndGetToken("courier@example.com", "Qwerty123!");
+
+        mockMvc.perform(get("/users")
+                        .header("Authorization", "Bearer " + courierToken))
+                .andExpect(status().isOk());
+
         User admin = new User("Admin", "admin@example.com", passwordEncoder.encode("Qwerty123!"), UserRole.ADMIN,
                 LocalDateTime.now());
         userRepository.save(admin);
@@ -81,6 +93,20 @@ class SecurityAuthorizationIntegrationTest {
                         .contentType(APPLICATION_JSON)
                         .content(createPayload))
                 .andExpect(status().isForbidden());
+
+        mockMvc.perform(post("/users")
+                        .header("Authorization", "Bearer " + courierToken)
+                        .contentType(APPLICATION_JSON)
+                        .content(createPayload))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void protectedEndpointShouldReturnJsonErrorForMalformedJwt() throws Exception {
+        mockMvc.perform(get("/users/me")
+                        .header("Authorization", "Bearer not-a-real-jwt"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.code").value(ApiErrorCode.AUTHENTICATION_FAILED.name()));
     }
 
     private String registerAndGetToken(String email, String password) throws Exception {

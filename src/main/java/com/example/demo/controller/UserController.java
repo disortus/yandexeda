@@ -20,6 +20,7 @@ import com.example.demo.service.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -40,11 +41,13 @@ public class UserController {
         this.service = service;
     }
 
-    @Operation(summary = "Получить список пользователей", description = "Доступно ролям ADMIN и COURIER")
+    @Operation(
+            summary = "Получить список пользователей",
+            description = "Возвращает всех пользователей в виде response DTO без passwordHash. Доступно ролям ADMIN и COURIER.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Список пользователей успешно получен"),
-            @ApiResponse(responseCode = "401", description = "Не авторизован", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
-            @ApiResponse(responseCode = "403", description = "Недостаточно прав", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+            @ApiResponse(responseCode = "200", description = "Список пользователей успешно получен", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = UserResponse.class)))),
+            @ApiResponse(responseCode = "401", description = "Не авторизован или JWT невалиден", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))),
+            @ApiResponse(responseCode = "403", description = "Недостаточно прав", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     @PreAuthorize("hasAnyRole('ADMIN','COURIER')")
     @GetMapping
@@ -52,24 +55,28 @@ public class UserController {
         return service.getAll();
     }
 
-    @Operation(summary = "Получить текущего пользователя", description = "Возвращает пользователя по email из JWT subject")
+    @Operation(
+            summary = "Получить текущего пользователя",
+            description = "Возвращает профиль пользователя, чей email находится в JWT subject. Подходит для экрана 'мой профиль'.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Профиль текущего пользователя"),
-            @ApiResponse(responseCode = "401", description = "Не авторизован", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
-            @ApiResponse(responseCode = "404", description = "Пользователь не найден", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+            @ApiResponse(responseCode = "200", description = "Профиль текущего пользователя", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Не авторизован или JWT невалиден", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Пользователь из JWT больше не найден в БД", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/me")
-    public UserResponse getMe(Principal principal) {
+    public UserResponse getMe(@Parameter(hidden = true) Principal principal) {
         return service.getByEmail(principal.getName());
     }
 
-    @Operation(summary = "Получить пользователя по ID", description = "Доступно ролям ADMIN и COURIER")
+    @Operation(
+            summary = "Получить пользователя по ID",
+            description = "Возвращает публичный DTO пользователя по database id. Доступно ролям ADMIN и COURIER.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Пользователь найден"),
-            @ApiResponse(responseCode = "401", description = "Не авторизован", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
-            @ApiResponse(responseCode = "403", description = "Недостаточно прав", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
-            @ApiResponse(responseCode = "404", description = "Пользователь не найден", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+            @ApiResponse(responseCode = "200", description = "Пользователь найден", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Не авторизован или JWT невалиден", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))),
+            @ApiResponse(responseCode = "403", description = "Недостаточно прав", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Пользователь не найден", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     @PreAuthorize("hasAnyRole('ADMIN','COURIER')")
     @GetMapping("/{id}")
@@ -77,12 +84,15 @@ public class UserController {
         return service.getById(id);
     }
 
-    @Operation(summary = "Создать пользователя (админом)", description = "Доступно только роли ADMIN")
+    @Operation(
+            summary = "Создать пользователя администратором",
+            description = "Создаёт пользователя с явно выбранной ролью CUSTOMER, ADMIN или COURIER. Используется для административного сценария, поэтому доступно только роли ADMIN.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Пользователь создан"),
-            @ApiResponse(responseCode = "400", description = "Ошибка валидации", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
-            @ApiResponse(responseCode = "401", description = "Не авторизован", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
-            @ApiResponse(responseCode = "403", description = "Недостаточно прав", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+            @ApiResponse(responseCode = "201", description = "Пользователь создан", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Ошибка Bean Validation во входном JSON", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Не авторизован или JWT невалиден", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))),
+            @ApiResponse(responseCode = "403", description = "Недостаточно прав", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))),
+            @ApiResponse(responseCode = "409", description = "Пользователь с таким email уже существует", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping

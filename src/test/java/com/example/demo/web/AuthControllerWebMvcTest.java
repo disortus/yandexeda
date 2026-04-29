@@ -1,5 +1,6 @@
 package com.example.demo.web;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -21,6 +22,7 @@ import com.example.demo.dto.UserResponse;
 import com.example.demo.dto.auth.AuthResponse;
 import com.example.demo.enums.TokenType;
 import com.example.demo.enums.UserRole;
+import com.example.demo.exception.ApiErrorResponseFactory;
 import com.example.demo.exception.GlobalExceptionHandler;
 import com.example.demo.service.AuthService;
 
@@ -35,7 +37,7 @@ class AuthControllerWebMvcTest {
     @BeforeEach
     void setup() {
         mockMvc = MockMvcBuilders.standaloneSetup(new AuthController(authService))
-                .setControllerAdvice(new GlobalExceptionHandler())
+                .setControllerAdvice(new GlobalExceptionHandler(new ApiErrorResponseFactory(Clock.systemUTC())))
                 .build();
     }
 

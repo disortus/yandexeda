@@ -5,6 +5,7 @@ import org.springframework.validation.annotation.Validated;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Validated
 @ConfigurationProperties(prefix = "app.jwt")
@@ -13,6 +14,7 @@ public class JwtProperties {
     private String issuer;
 
     @NotBlank
+    @Size(min = 32, message = "JWT secret must be at least 32 characters for HS256")
     private String secret;
 
     @Min(1)

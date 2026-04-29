@@ -29,11 +29,12 @@ Validator-слой отвечает за бизнес-валидацию, кот
 
 ## Как реализовано в проекте
 
-`UserValidator.validateForCreate(request)`:
+`UserValidator.validateEmailUniqueness(normalizedEmail, originalEmail)`:
 
-1. Нормализует email (`EmailUtils.normalize`)
-2. Проверяет `repo.existsByEmailIgnoreCase(email)`
-3. Бросает `BusinessValidationException`, если правило нарушено
+1. получает уже нормализованный email,
+2. проверяет `repo.existsByEmailIgnoreCase(normalizedEmail)`,
+3. бросает `ResourceAlreadyExistsException`, если email занят,
+4. оставляет в сообщении `originalEmail`, чтобы клиент видел свой исходный ввод.
 
 ---
 
@@ -50,3 +51,30 @@ Validator-слой отвечает за бизнес-валидацию, кот
 2. Логику проверки не разбрасывай по контроллерам — держи централизованно.
 3. Формулируй сообщения ошибок так, чтобы API-клиент мог их понять.
 4. Если проверка используется в нескольких местах — выноси в отдельный validator.
+
+---
+
+## Почему нормализация email делается до валидатора
+
+`UserValidator` проверяет бизнес-правило "email должен быть уникальным". Он не обязан знать все детали подготовки данных.
+
+В сервисе поток выглядит так:
+
+```java
+String normalizedEmail = EmailUtils.normalize(request.getEmail());
+validator.validateEmailUniqueness(normalizedEmail, request.getEmail());
+```
+
+Так разделяются ответственности:
+
+- `EmailUtils` знает, как привести email к единому виду,
+- `UserValidator` знает, как проверить бизнес-правило,
+- `UserService` оркестрирует шаги use-case.
+
+## Почему используется `ResourceAlreadyExistsException`
+
+Занятый email — это конфликт с текущим состоянием системы. Поэтому HTTP-ответ должен быть `409 Conflict`, а не `400 Bad Request`.
+
+`400` означает "запрос плохо сформирован": например, email не похож на email или пароль слишком короткий.
+
+`409` означает "запрос понятен и валиден, но его нельзя выполнить из-за конфликта состояния": например, пользователь с таким email уже есть.
