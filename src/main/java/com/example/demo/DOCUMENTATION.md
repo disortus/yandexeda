@@ -80,6 +80,7 @@ Spring создаёт объекты (бины) и связывает их ме�
 ## 5. Пакеты проекта и ответственность
 
 - `controller/` — HTTP API (вход)
+- `docs/` — учебные markdown-документы по сквозным темам вроде Swagger schemas
 - `dto/` — контракты request/response
 - `entity/` — модель хранения (JPA)
 - `repository/` — доступ к БД
@@ -218,6 +219,7 @@ Spring создаёт объекты (бины) и связывает их ме�
 - `src/main/resources/DOCUMENTATION.md` — подробный разбор `application.yaml`
 - `src/main/java/com/example/demo/security/DOCUMENTATION.md` — deep dive по security
 - `src/main/java/com/example/demo/enums/DOCUMENTATION.md` — зачем enums и как их расширять
+- `src/main/java/com/example/demo/docs/SWAGGER_SCHEMAS.md` — подробное объяснение Swagger/OpenAPI schemas
 
 ---
 
@@ -266,6 +268,7 @@ Spring создаёт объекты (бины) и связывает их ме�
 Поэтому текущая структура — осознанный компромисс: она слоистая, но модульная по ответственности. Каждый пакет имеет чёткую границу:
 
 - `security` не смешивается с `utils`,
+- `docs` содержит только учебные markdown-файлы, а не runtime-логику,
 - `exception` держит error contract,
 - `validator` держит бизнес-проверки,
 - `config` держит infrastructure wiring,
@@ -288,6 +291,7 @@ Spring создаёт объекты (бины) и связывает их ме�
 | Класс формирует/ловит ошибки API? | `exception` |
 | Класс связан с JWT, ролями или Spring Security? | `security` |
 | Класс создаёт инфраструктурный bean? | `config` |
+| Файл объясняет сквозную учебную тему? | `docs` |
 | Класс маленький, stateless и не знает о Spring/JPA/Security? | `utils` |
 
 Если класс подходит сразу под несколько строк, это сигнал внимательно посмотреть на ответственность. Например, `ValidationErrorUtils` выглядит как "утилита", но знает о `BindingResult` и `FieldValidationError`, поэтому правильно лежит в `exception`.

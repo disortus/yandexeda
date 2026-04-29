@@ -35,6 +35,7 @@
 
 - `web/AuthControllerWebMvcTest` — проверка HTTP-контракта auth контроллера: статус-коды, JSON, `@Valid`, формат ошибки.
 - `web/UserControllerWebMvcTest` — проверка HTTP-контракта user контроллера: `GET /users/{id}`, `POST /users`, structured validation errors.
+- `web/StatusControllerWebMvcTest` — проверка простого публичного контроллера без Swagger-аннотаций.
 
 ### `java/com/example/demo/integration/`
 
@@ -46,6 +47,7 @@
 
 - `e2e/ApplicationE2ETest` — полноценный сценарий через настоящий web server на random port:
   - проверка OpenAPI `/v3/api-docs`,
+  - проверка публичного `/status`,
   - регистрация customer,
   - вызов `/users/me`,
   - проверка 401/403,

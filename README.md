@@ -3,6 +3,7 @@
 Этот проект — учебная заготовка, чтобы понять **как работает Spring Boot в реальном API** и как правильно раскладывать код по слоям:
 
 - `controller`
+- `docs`
 - `dto`
 - `entity`
 - `repository`
@@ -20,6 +21,7 @@
 ### API
 - `POST /auth/register` — зарегистрировать нового `CUSTOMER` и получить JWT
 - `POST /auth/login` — войти по email/password и получить JWT
+- `GET /status` — публичный status endpoint без Swagger-аннотаций
 - `GET /users/me` — получить текущего пользователя по JWT
 - `GET /users` — получить список пользователей (`ADMIN`, `COURIER`)
 - `GET /users/{id}` — получить пользователя по id (`ADMIN`, `COURIER`)
@@ -93,6 +95,13 @@ curl -X POST http://localhost:8080/auth/login \
   -d '{"email":"alice@example.com","password":"Qwerty123!"}'
 ```
 
+### Статус приложения
+Эта ручка сделана без Swagger-аннотаций, чтобы показать автоматическую генерацию OpenAPI по Spring MVC mapping:
+
+```bash
+curl http://localhost:8080/status
+```
+
 ### Получение текущего пользователя
 ```bash
 curl http://localhost:8080/users/me \
@@ -115,6 +124,7 @@ curl http://localhost:8080/users \
 
 - `src/main/java/com/example/demo/DOCUMENTATION.md` — общая архитектура Spring Boot
 - `src/main/java/com/example/demo/controller/DOCUMENTATION.md`
+- `src/main/java/com/example/demo/docs/SWAGGER_SCHEMAS.md` — подробный разбор Swagger/OpenAPI schemas
 - `src/main/java/com/example/demo/dto/DOCUMENTATION.md`
 - `src/main/java/com/example/demo/dto/auth/DOCUMENTATION.md`
 - `src/main/java/com/example/demo/entity/DOCUMENTATION.md`

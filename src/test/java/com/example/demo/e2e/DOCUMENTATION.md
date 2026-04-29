@@ -7,15 +7,16 @@ E2E-тест проверяет приложение максимально бл
 Один большой пользовательский сценарий:
 
 1. Swagger/OpenAPI доступен по `/v3/api-docs`.
-2. OpenAPI содержит ключевые paths: `/auth/register`, `/auth/login`, `/users`, `/users/me`.
-3. Customer регистрируется через `/auth/register`.
-4. Customer вызывает `/users/me` с JWT.
-5. Анонимный запрос к `/users` получает `401`.
-6. Customer-запрос к `/users` получает `403`.
-7. Admin логинится и создаёт courier через `POST /users`.
-8. Admin читает список пользователей.
-9. Duplicate registration возвращает `409 Conflict`.
-10. Невалидная регистрация возвращает `400` и `fieldErrors`.
+2. OpenAPI содержит ключевые paths: `/status`, `/auth/register`, `/auth/login`, `/users`, `/users/me`.
+3. Публичный `/status` возвращает `UP` без JWT.
+4. Customer регистрируется через `/auth/register`.
+5. Customer вызывает `/users/me` с JWT.
+6. Анонимный запрос к `/users` получает `401`.
+7. Customer-запрос к `/users` получает `403`.
+8. Admin логинится и создаёт courier через `POST /users`.
+9. Admin читает список пользователей.
+10. Duplicate registration возвращает `409 Conflict`.
+11. Невалидная регистрация возвращает `400` и `fieldErrors`.
 
 ## Чем e2e отличается от integration
 
@@ -41,5 +42,6 @@ E2E здесь подтверждает:
 - embedded server стартует,
 - springdoc подключён,
 - security не блокирует `/v3/api-docs`,
+- security не блокирует публичный `/status`,
 - JSON OpenAPI реально строится,
 - в контракте есть ключевые endpoints.

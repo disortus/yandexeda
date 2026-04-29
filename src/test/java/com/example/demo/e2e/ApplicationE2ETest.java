@@ -56,10 +56,15 @@ class ApplicationE2ETest {
         JsonNode openApi = objectMapper.readTree(openApiResponse.body());
         assertThat(openApi.at("/info/title").asText()).isEqualTo("Demo Spring Boot API");
         assertThat(openApi.at("/components/securitySchemes/bearerAuth/type").asText()).isEqualTo("http");
+        assertThat(openApi.path("paths").has("/status")).isTrue();
         assertThat(openApi.path("paths").has("/auth/register")).isTrue();
         assertThat(openApi.path("paths").has("/auth/login")).isTrue();
         assertThat(openApi.path("paths").has("/users")).isTrue();
         assertThat(openApi.path("paths").has("/users/me")).isTrue();
+
+        HttpResponse<String> statusResponse = sendGet("/status", null);
+        assertThat(statusResponse.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(objectMapper.readTree(statusResponse.body()).get("status").asText()).isEqualTo("UP");
 
         String customerEmail = "customer.e2e@example.com";
         HttpResponse<String> registerCustomerResponse = sendPost("/auth/register", null, """

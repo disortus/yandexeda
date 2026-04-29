@@ -341,6 +341,7 @@ implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6'
 | --- | --- | --- | --- | --- |
 | `POST` | `/auth/register` | `201 AuthResponse` | `400`, `409` | публично |
 | `POST` | `/auth/login` | `200 AuthResponse` | `400`, `401` | публично |
+| `GET` | `/status` | `200 StatusResponse` | `500` | публично, без ручных Swagger-аннотаций |
 | `GET` | `/users/me` | `200 UserResponse` | `401`, `404` | JWT |
 | `GET` | `/users` | `200 UserResponse[]` | `401`, `403` | JWT + `ADMIN/COURIER` |
 | `GET` | `/users/{id}` | `200 UserResponse` | `401`, `403`, `404` | JWT + `ADMIN/COURIER` |
@@ -352,6 +353,7 @@ implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6'
 
 В проекте e2e-тест проверяет, что `/v3/api-docs` реально отдаёт `200` и содержит ожидаемые paths:
 
+- `/status`,
 - `/auth/register`,
 - `/auth/login`,
 - `/users`,
@@ -376,3 +378,19 @@ Swagger отвечает на вопрос:
 - не сломался ли сценарий на реальном HTTP-сервере.
 
 Для хорошего учебного проекта нужны оба инструмента: Swagger как живой справочник и тесты как проверка поведения.
+
+---
+
+## 19) Где теперь читать про Swagger schemas
+
+Подробный разбор схем вынесен в отдельную папку:
+
+- `src/main/java/com/example/demo/docs/SWAGGER_SCHEMAS.md`
+
+Там описано:
+
+- что такое OpenAPI schema,
+- как springdoc строит schemas из DTO,
+- чем отличаются DTO с `@Schema` и без `@Schema`,
+- почему `StatusController` виден в OpenAPI даже без Swagger-аннотаций,
+- какие schemas сейчас есть в проекте.

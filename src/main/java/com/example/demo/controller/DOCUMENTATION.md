@@ -96,6 +96,12 @@
 
 Это хороший пример, как controller слой остаётся "тонким", но при этом явно выражает security-контракт API.
 
+Также добавлен `StatusController`:
+
+- `GET /status`
+
+Он специально сделан без Swagger-аннотаций (`@Operation`, `@ApiResponse`, `@Tag`). Это учебный контраст: springdoc всё равно увидит endpoint через Spring MVC mapping, но описание в Swagger будет менее богатым, чем у контроллеров с явными OpenAPI-аннотациями.
+
 ---
 
 ## Подробно: как читать аннотации в контроллерах проекта
@@ -159,6 +165,7 @@ public UserResponse getMe(@Parameter(hidden = true) Principal principal)
 | --- | --- | --- | --- | --- |
 | `POST` | `/auth/register` | `AuthController` | публично | `AuthResponse` с JWT и пользователем |
 | `POST` | `/auth/login` | `AuthController` | публично | `AuthResponse` с JWT и пользователем |
+| `GET` | `/status` | `StatusController` | публично | `StatusResponse` |
 | `GET` | `/users/me` | `UserController` | любой authenticated | `UserResponse` текущего пользователя |
 | `GET` | `/users` | `UserController` | `ADMIN`, `COURIER` | список `UserResponse` |
 | `GET` | `/users/{id}` | `UserController` | `ADMIN`, `COURIER` | `UserResponse` по id |

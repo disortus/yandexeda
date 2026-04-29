@@ -78,6 +78,7 @@ Security — это отдельная инфраструктурная подс
 ## 4. Матрица доступа (high-level)
 
 - `/auth/register`, `/auth/login` — публичные,
+- `/status` — публичный технический status endpoint,
 - `/users/me` — любой аутентифицированный пользователь,
 - `GET /users`, `GET /users/{id}` — `ADMIN` и `COURIER`,
 - `POST /users` — только `ADMIN`.

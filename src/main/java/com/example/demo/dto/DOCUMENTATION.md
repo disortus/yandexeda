@@ -23,11 +23,13 @@ DTO не должен быть равен Entity 1:1. Это разные уро
    - единый формат ошибок
 4. `FieldValidationError`
    - отдельная ошибка поля для `@Valid`
-5. `auth/RegisterRequest`
+5. `StatusResponse`
+   - простой ответ для `GET /status`, намеренно без `@Schema`
+6. `auth/RegisterRequest`
    - входной DTO для `POST /auth/register`
-6. `auth/LoginRequest`
+7. `auth/LoginRequest`
    - входной DTO для `POST /auth/login`
-7. `auth/AuthResponse`
+8. `auth/AuthResponse`
    - успешный ответ регистрации/логина с JWT и пользователем
 
 ---
