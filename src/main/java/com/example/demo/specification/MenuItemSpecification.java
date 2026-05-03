@@ -13,8 +13,6 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 
-// пример
-
 public class MenuItemSpecification {
      public static Specification<MenuItem> fromFilter(
             Long restaurantId,
@@ -26,18 +24,10 @@ public class MenuItemSpecification {
 
             List<Predicate> predicates = new ArrayList<>();
 
-            // обязательно фильтр по ресторану
-            predicates.add(cb.equal(
-                    root.get("restaurant").get("id"),
-                    restaurantId
-            ));
-
-            // TODO: make getters and setters to MenuItemFilter                 
-
-            if (f.getCategory() != null) {
+            if (f.getCategoryId() != null) {
                 predicates.add(cb.equal(
-                        root.get("category"),
-                        f.getCategory()
+                        root.get("categoryId"),
+                        f.getCategoryId()
                 ));
             }
 
@@ -53,6 +43,14 @@ public class MenuItemSpecification {
                         root.get("price"),
                         f.getMaxPrice()
                 ));
+            }
+
+            if (f.getRestaurantId() != null){
+                predicates.add(cb.equal(root.get("restaurantId"), f.getRestaurantId()));
+            }
+
+            if (f.getIsAvailable() != null){
+                predicates.add(cb.equal(root.get("isAvailable"), f.getIsAvailable()));
             }
 
             return cb.and(predicates.toArray(new Predicate[0]));

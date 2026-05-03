@@ -6,9 +6,6 @@ import org.springframework.stereotype.Repository;
 
 import com.example.demo.entity.MenuItem;
 
-// пример
-// JpaSpecificationExecutor - ключ к фильтрам (аналог Mongo filter)
-
 @Repository
 public interface MenuItemRepository extends JpaRepository<MenuItem, Long>, JpaSpecificationExecutor<MenuItem>{
     

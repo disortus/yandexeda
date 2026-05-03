@@ -12,8 +12,6 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
-// пример
-
 public class RestaurantSpecification {
 
     public static Specification<Restaurant> fromFilter(RestaurantFilter f) {
@@ -23,19 +21,11 @@ public class RestaurantSpecification {
 
             List<Predicate> predicates = new ArrayList<>();
 
-            // TODO: make getters and setter to filters
-
-            if (f.getCity() != null) {
-                predicates.add(cb.equal(root.get("city"), f.getCity()));
-            }
-
-            if (f.getMinRating() != null) {
-                predicates.add(cb.greaterThanOrEqualTo(
-                        root.get("rating"), f.getMinRating()));
-            }
-
-            if (f.getTag() != null) {
-                predicates.add(cb.isMember(f.getTag(), root.get("tags")));
+            if (f.getName != null){
+                predicates.add(cb.like(
+                    cb.lower(root.get("name")),
+                    "%" + f.getName().toLowerCase() + "%"
+                ));
             }
 
             return cb.and(predicates.toArray(new Predicate[0]));
