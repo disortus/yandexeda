@@ -1,8 +1,6 @@
 package com.example.demo.filter;
 
 public class OrderFilter {
-    private Long customerId;
-    private Long courierId;
     private Long restaurantId;
     private String status;
     private Double minTotalPrice;
@@ -11,29 +9,11 @@ public class OrderFilter {
     public OrderFilter() {
     }
 
-    public OrderFilter(Long customerId, Long courierId, Long restaurantId, String status, Double minTotalPrice, Double maxTotalPrice) {
-        this.customerId = customerId;
-        this.courierId = courierId;
+    public OrderFilter(Long restaurantId, String status, Double minTotalPrice, Double maxTotalPrice) {
         this.restaurantId = restaurantId;
         this.status = status;
         this.minTotalPrice = minTotalPrice;
         this.maxTotalPrice = maxTotalPrice;
-    }
-
-    public Long getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(Long customerId) {
-        this.customerId = customerId;
-    }
-
-    public Long getCourierId() {
-        return courierId;
-    }
-
-    public void setCourierId(Long courierId) {
-        this.courierId = courierId;
     }
 
     public Long getRestaurantId() {
@@ -68,17 +48,6 @@ public class OrderFilter {
         this.maxTotalPrice = maxTotalPrice;
     }
 }
-package com.example.demo.filter;
-
-import java.time.LocalDateTime;
-
-public class OrderFilter {
-    private String status;
-    private Long customerId;
-    private Long courierId;
-    private Long restaurantId;
-    private LocalDateTime dateFrom;
-    private LocalDateTime dateTo;
 
     public OrderFilter() {
     }

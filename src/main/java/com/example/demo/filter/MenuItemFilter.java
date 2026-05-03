@@ -1,7 +1,7 @@
 package com.example.demo.filter;
 
 public class MenuItemFilter {
-    private String category;
+    private Long categoryId;
     private Double minPrice;
     private Double maxPrice;
     private Long restaurantId;
@@ -10,20 +10,20 @@ public class MenuItemFilter {
     public MenuItemFilter() {
     }
 
-    public MenuItemFilter(String category, Double minPrice, Double maxPrice, Long restaurantId, Boolean isAvailable) {
-        this.category = category;
+    public MenuItemFilter(Long categoryId, Double minPrice, Double maxPrice, Long restaurantId, Boolean isAvailable) {
+        this.categoryId = categoryId;
         this.minPrice = minPrice;
         this.maxPrice = maxPrice;
         this.restaurantId = restaurantId;
         this.isAvailable = isAvailable;
     }
 
-    public String getCategory() {
-        return category;
+    public Long getCategoryId() {
+        return categoryId;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
     }
 
     public Double getMinPrice() {
