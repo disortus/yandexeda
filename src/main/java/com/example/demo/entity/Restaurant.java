@@ -9,7 +9,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
-// пример
 
 @Entity
 @Table(name = "restaurants")
@@ -19,13 +18,49 @@ public class Restaurant {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
-    private String city;
-    private Double rating;
 
-    @ElementCollection
-    private List<String> tags;
+    private String description;
 
-    // TODO: getters/setters
+    @Column (nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
+
+    public Restaurant() {
+    }
+
+    public Restaurant(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 }
 

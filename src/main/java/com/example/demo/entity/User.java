@@ -21,7 +21,7 @@ public class User {
     private Long id;
 
     @Column(nullable = false, length = 50)
-    private String name;
+    private String username;
 
     @Column(nullable = false, unique = true, length = 10)
     private String phone;
@@ -31,20 +31,24 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private UserRole role;
+    private UserRole role = UserRole.CUSTOMER;
 
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
 
     public User() {
     }
 
-    public User(String name, String email, String passwordHash, UserRole role, LocalDateTime createdAt) {
-        this.name = name;
-        this.email = email;
+    public User(String username, String phone, String passwordHash, UserRole role) {
+        this.username = username;
+        this.phone = phone;
         this.passwordHash = passwordHash;
         this.role = role;
-        this.createdAt = createdAt;
     }
 
     public Long getId() {
@@ -55,20 +59,20 @@ public class User {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public String getEmail() {
-        return email;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public String getPasswordHash() {
@@ -89,9 +93,5 @@ public class User {
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
     }
 }
