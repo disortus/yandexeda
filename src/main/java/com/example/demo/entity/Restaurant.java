@@ -24,7 +24,7 @@ public class Restaurant {
 
     private String description;
 
-    @Column (nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @PrePersist

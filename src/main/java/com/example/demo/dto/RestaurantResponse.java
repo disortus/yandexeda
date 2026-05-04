@@ -14,4 +14,12 @@ public record RestaurantResponse(
         String description,
         @Schema(description = "Дата создания ресторана (UTC)", example = "2026-04-28T20:45:10")
         LocalDateTime createdAt) {
+    public static RestaurantResponse fromEntity(com.example.demo.entity.Restaurant restaurant) {
+        return new RestaurantResponse(
+                restaurant.getId(),
+                restaurant.getName(),
+                restaurant.getDescription(),
+                restaurant.getCreatedAt()
+        );
+    }
 }

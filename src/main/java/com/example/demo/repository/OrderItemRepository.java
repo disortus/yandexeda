@@ -10,6 +10,4 @@ import com.example.demo.entity.OrderItem;
 @Repository
 public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
     List<OrderItem> findByOrderId(Long orderId);
-
-    List<OrderItem> findByMenuItemId(Long menuItemId);
 }

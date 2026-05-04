@@ -3,6 +3,7 @@ package com.example.demo.enums;
 public enum OrderStatus {
     PENDING,
     ACCEPTED,
+    ASSIGNED,
     DELIVERING,
     COMPLETED,
     CANCELLED;
