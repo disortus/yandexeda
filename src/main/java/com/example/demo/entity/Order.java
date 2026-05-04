@@ -26,7 +26,7 @@ public class Order {
     private User customer;
 
     @ManyToOne
-    @JoinColumn(name = "courier_id", nullable = false)
+    @JoinColumn(name = "courier_id")
     private User courier;
 
     @ManyToOne
@@ -34,14 +34,14 @@ public class Order {
     private Restaurant restaurant;
 
     @ManyToOne
-    @JoinColumn(name = "delivery_address_id", nullable = false)
-    private DeliveryAddress deliveryAddress;
-
-    @Column(defaultValue = "pending", nullable = false) // у Column нет такого значения как defaultValue
-    private String status;
+    @JoinColumn(name = "delivery_address_id")
+    private Address deliveryAddress;
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal totalPrice;
+
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -49,18 +49,29 @@ public class Order {
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
+        if (status == null) {
+            status = "pending";
+        }
     }
 
     public Order() {
     }
 
-    public Order(Customer customer, Courier courier, Restaurant restaurant, DeliveryAddress deliveryAddress, String status, BigDecimal totalPrice) {
+    public Order(User customer, User courier, Restaurant restaurant, Address deliveryAddress, String status, BigDecimal totalPrice) {
         this.customer = customer;
         this.courier = courier;
         this.restaurant = restaurant;
         this.deliveryAddress = deliveryAddress;
         this.status = status;
         this.totalPrice = totalPrice;
+    }
+
+    public enum OrderStatus {
+        PENDING,
+        ACCEPTED,
+        DELIVERING,
+        COMPLETED,
+        CANCELLED
     }
 
     public Long getId() {
@@ -71,7 +82,7 @@ public class Order {
         return customer;
     }
 
-    public void setCustomer(Customer customer) {
+    public void setCustomer(User customer) {
         this.customer = customer;
     }
 
@@ -79,7 +90,7 @@ public class Order {
         return courier;
     }
 
-    public void setCourier(Courier courier) {
+    public void setCourier(User courier) {
         this.courier = courier;
     }
 
@@ -91,11 +102,11 @@ public class Order {
         this.restaurant = restaurant;
     }
 
-    public DeliveryAddress getDeliveryAddress() {
+    public Address getDeliveryAddress() {
         return deliveryAddress;
     }
 
-    public void setDeliveryAddress(DeliveryAddress deliveryAddress) {
+    public void setDeliveryAddress(Address deliveryAddress) {
         this.deliveryAddress = deliveryAddress;
     }
 
