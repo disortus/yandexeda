@@ -41,7 +41,8 @@ public class Order {
     private BigDecimal totalPrice;
 
     @Enumerated(EnumType.STRING)
-    private OrderStatus status;
+    @Column(nullable = false, length = 20)
+    private OrderStatus status = OrderStatus.PENDING;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -66,19 +67,11 @@ public class Order {
         this.totalPrice = totalPrice;
     }
 
-    public enum OrderStatus {
-        PENDING,
-        ACCEPTED,
-        DELIVERING,
-        COMPLETED,
-        CANCELLED
-    }
-
     public Long getId() {
         return id;
     }
 
-    public Customer getCustomer() {
+    public User getCustomer() {
         return customer;
     }
 
@@ -86,7 +79,7 @@ public class Order {
         this.customer = customer;
     }
 
-    public Courier getCourier() {
+    public User getCourier() {
         return courier;
     }
 
