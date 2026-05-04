@@ -30,30 +30,30 @@ class UserRepositoryIntegrationTest {
     }
 
     @Test
-    void existsByEmailIgnoreCaseShouldWorkCaseInsensitive() {
+    void existsByPhoneShouldWork() {
         User user = new User(
                 "Alice",
-                "alice@example.com",
+                "7012345678",
                 passwordEncoder.encode("Qwerty123!"),
                 UserRole.CUSTOMER,
                 LocalDateTime.now());
         userRepository.save(user);
 
-        assertThat(userRepository.existsByEmailIgnoreCase("ALICE@EXAMPLE.COM")).isTrue();
-        assertThat(userRepository.existsByEmailIgnoreCase("bob@example.com")).isFalse();
+        assertThat(userRepository.existsByPhone("7012345678")).isTrue();
+        assertThat(userRepository.existsByPhone("7000000000")).isFalse();
     }
 
     @Test
-    void findByEmailIgnoreCaseShouldReturnUser() {
+    void findByPhoneShouldReturnUser() {
         User user = new User(
                 "Courier",
-                "courier@example.com",
+                "7011111111",
                 passwordEncoder.encode("Qwerty123!"),
                 UserRole.COURIER,
                 LocalDateTime.now());
         userRepository.save(user);
 
-        assertThat(userRepository.findByEmailIgnoreCase("COURIER@example.com"))
+        assertThat(userRepository.findByPhone("7011111111"))
                 .isPresent()
                 .get()
                 .extracting(User::getRole)

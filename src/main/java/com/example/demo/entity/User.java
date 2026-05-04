@@ -52,6 +52,14 @@ public class User {
         this.role = role;
     }
 
+    public User(String username, String phone, String passwordHash, UserRole role, LocalDateTime createdAt) {
+        this.username = username;
+        this.phone = phone;
+        this.passwordHash = passwordHash;
+        this.role = role;
+        this.createdAt = createdAt;
+    }
+
     public Long getId() {
         return id;
     }
@@ -94,5 +102,9 @@ public class User {
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

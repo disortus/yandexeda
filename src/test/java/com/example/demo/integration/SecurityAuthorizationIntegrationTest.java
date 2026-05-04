@@ -53,27 +53,27 @@ class SecurityAuthorizationIntegrationTest {
         mockMvc.perform(get("/users"))
                 .andExpect(status().isUnauthorized());
 
-        String customerToken = registerAndGetToken("customer@example.com", "Qwerty123!");
+        String customerToken = registerAndGetToken("7000000001", "Qwerty123!");
 
         mockMvc.perform(get("/users")
                         .header("Authorization", "Bearer " + customerToken))
                 .andExpect(status().isForbidden());
 
-        User courier = new User("Courier", "courier@example.com", passwordEncoder.encode("Qwerty123!"), UserRole.COURIER,
+        User courier = new User("Courier", "7000000002", passwordEncoder.encode("Qwerty123!"), UserRole.COURIER,
                 LocalDateTime.now());
         userRepository.save(courier);
 
-        String courierToken = loginAndGetToken("courier@example.com", "Qwerty123!");
+        String courierToken = loginAndGetToken("7000000002", "Qwerty123!");
 
         mockMvc.perform(get("/users")
                         .header("Authorization", "Bearer " + courierToken))
                 .andExpect(status().isOk());
 
-        User admin = new User("Admin", "admin@example.com", passwordEncoder.encode("Qwerty123!"), UserRole.ADMIN,
+        User admin = new User("Admin", "7000000003", passwordEncoder.encode("Qwerty123!"), UserRole.ADMIN,
                 LocalDateTime.now());
         userRepository.save(admin);
 
-        String adminToken = loginAndGetToken("admin@example.com", "Qwerty123!");
+        String adminToken = loginAndGetToken("7000000003", "Qwerty123!");
 
         mockMvc.perform(get("/users")
                         .header("Authorization", "Bearer " + adminToken))
@@ -81,8 +81,8 @@ class SecurityAuthorizationIntegrationTest {
 
         String createPayload = """
                 {
-                  "name": "Courier User",
-                  "email": "courier@example.com",
+                  "username": "Courier User",
+                  "phone": "7000000004",
                   "password": "Qwerty123!",
                   "role": "COURIER"
                 }
@@ -109,14 +109,14 @@ class SecurityAuthorizationIntegrationTest {
                 .andExpect(jsonPath("$.code").value(ApiErrorCode.AUTHENTICATION_FAILED.name()));
     }
 
-    private String registerAndGetToken(String email, String password) throws Exception {
+    private String registerAndGetToken(String phone, String password) throws Exception {
         String payload = """
                 {
-                  "name": "Customer",
-                  "email": "%s",
+                  "username": "Customer",
+                  "phone": "%s",
                   "password": "%s"
                 }
-                """.formatted(email, password);
+                """.formatted(phone, password);
 
         MvcResult result = mockMvc.perform(post("/auth/register")
                         .contentType(APPLICATION_JSON)
@@ -127,13 +127,13 @@ class SecurityAuthorizationIntegrationTest {
         return JsonPath.parse(result.getResponse().getContentAsString()).read("$.accessToken", String.class);
     }
 
-    private String loginAndGetToken(String email, String password) throws Exception {
+    private String loginAndGetToken(String phone, String password) throws Exception {
         String payload = """
                 {
-                  "email": "%s",
+                  "phone": "%s",
                   "password": "%s"
                 }
-                """.formatted(email, password);
+                """.formatted(phone, password);
 
         MvcResult result = mockMvc.perform(post("/auth/login")
                         .contentType(APPLICATION_JSON)

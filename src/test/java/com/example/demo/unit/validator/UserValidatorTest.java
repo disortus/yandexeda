@@ -23,19 +23,19 @@ class UserValidatorTest {
     private UserValidator userValidator;
 
     @Test
-    void validateEmailUniquenessShouldThrowWhenEmailExists() {
-        when(userRepository.existsByEmailIgnoreCase("alice@example.com")).thenReturn(true);
+    void validatePhoneUniquenessShouldThrowWhenPhoneExists() {
+        when(userRepository.existsByPhone("7012345678")).thenReturn(true);
 
-        assertThatThrownBy(() -> userValidator.validateEmailUniqueness("alice@example.com", "Alice@Example.com"))
+        assertThatThrownBy(() -> userValidator.validatePhoneUniqueness("7012345678"))
                 .isInstanceOf(ResourceAlreadyExistsException.class)
                 .hasMessageContaining("already exists");
     }
 
     @Test
-    void validateEmailUniquenessShouldPassWhenEmailNotExists() {
-        when(userRepository.existsByEmailIgnoreCase("alice@example.com")).thenReturn(false);
+    void validatePhoneUniquenessShouldPassWhenPhoneNotExists() {
+        when(userRepository.existsByPhone("7012345678")).thenReturn(false);
 
-        assertThatCode(() -> userValidator.validateEmailUniqueness("alice@example.com", "alice@example.com"))
+        assertThatCode(() -> userValidator.validatePhoneUniqueness("7012345678"))
                 .doesNotThrowAnyException();
     }
 }

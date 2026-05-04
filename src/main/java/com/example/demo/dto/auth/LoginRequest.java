@@ -1,28 +1,26 @@
 package com.example.demo.dto.auth;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Pattern;
 
 @Schema(description = "Запрос на вход в систему")
 public class LoginRequest {
-    @Schema(description = "Email пользователя", example = "alice@example.com")
-    @NotBlank(message = "Email is required")
-    @Email(message = "Email must be valid")
-    @Size(max = 120, message = "Email must not exceed 120 characters")
-    private String email;
+    @Schema(description = "Телефон пользователя (10 цифр)", example = "7012345678")
+    @NotBlank(message = "Phone is required")
+    @Pattern(regexp = "^\\d{10}$", message = "Phone must contain exactly 10 digits")
+    private String phone;
 
     @Schema(description = "Пароль пользователя", example = "Qwerty123!")
     @NotBlank(message = "Password is required")
     private String password;
 
-    public String getEmail() {
-        return email;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public String getPassword() {

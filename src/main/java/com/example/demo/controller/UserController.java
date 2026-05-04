@@ -57,7 +57,7 @@ public class UserController {
 
     @Operation(
             summary = "Получить текущего пользователя",
-            description = "Возвращает профиль пользователя, чей email находится в JWT subject. Подходит для экрана 'мой профиль'.")
+            description = "Возвращает профиль пользователя, чей phone находится в JWT subject. Подходит для экрана 'мой профиль'.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Профиль текущего пользователя", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class))),
             @ApiResponse(responseCode = "401", description = "Не авторизован или JWT невалиден", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))),
@@ -66,7 +66,7 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/me")
     public UserResponse getMe(@Parameter(hidden = true) Principal principal) {
-        return service.getByEmail(principal.getName());
+        return service.getByPhone(principal.getName());
     }
 
     @Operation(
@@ -92,7 +92,7 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "Ошибка Bean Validation во входном JSON", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))),
             @ApiResponse(responseCode = "401", description = "Не авторизован или JWT невалиден", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))),
             @ApiResponse(responseCode = "403", description = "Недостаточно прав", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))),
-            @ApiResponse(responseCode = "409", description = "Пользователь с таким email уже существует", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class)))
+            @ApiResponse(responseCode = "409", description = "Пользователь с таким phone уже существует", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping

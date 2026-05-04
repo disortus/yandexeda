@@ -13,7 +13,6 @@ import com.example.demo.dto.UserResponse;
 import com.example.demo.entity.User;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.UserRepository;
-import com.example.demo.utils.EmailUtils;
 import com.example.demo.validator.UserValidator;
 
 @Service
@@ -43,21 +42,21 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public UserResponse getByEmail(String email) {
-        User user = repo.findByEmailIgnoreCase(EmailUtils.normalize(email))
-                .orElseThrow(() -> new ResourceNotFoundException("User with email '" + email + "' not found"));
+    public UserResponse getByPhone(String phone) {
+        User user = repo.findByPhone(phone)
+                .orElseThrow(() -> new ResourceNotFoundException("User with phone '" + phone + "' not found"));
 
         return toResponse(user);
     }
 
     @Transactional
     public UserResponse createByAdmin(UserCreateRequest request) {
-        String normalizedEmail = EmailUtils.normalize(request.getEmail());
-        validator.validateEmailUniqueness(normalizedEmail, request.getEmail());
+        String phone = request.getPhone().trim();
+        validator.validatePhoneUniqueness(phone);
 
         User user = new User();
-        user.setName(request.getName().trim());
-        user.setEmail(normalizedEmail);
+        user.setUsername(request.getUsername().trim());
+        user.setPhone(phone);
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         user.setRole(request.getRole());
         user.setCreatedAt(LocalDateTime.now(clock));
@@ -69,8 +68,8 @@ public class UserService {
     private UserResponse toResponse(User user) {
         return new UserResponse(
                 user.getId(),
-                user.getName(),
-                user.getEmail(),
+                user.getUsername(),
+                user.getPhone(),
                 user.getRole(),
                 user.getCreatedAt());
     }

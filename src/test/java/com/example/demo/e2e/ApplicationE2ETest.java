@@ -1,13 +1,12 @@
 package com.example.demo.e2e;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,25 +65,25 @@ class ApplicationE2ETest {
         assertThat(statusResponse.statusCode()).isEqualTo(HttpStatus.OK.value());
         assertThat(objectMapper.readTree(statusResponse.body()).get("status").asText()).isEqualTo("UP");
 
-        String customerEmail = "customer.e2e@example.com";
+        String customerPhone = "7000000005";
         HttpResponse<String> registerCustomerResponse = sendPost("/auth/register", null, """
                 {
-                  "name": "Customer E2E",
-                  "email": "%s",
+                  "username": "Customer E2E",
+                  "phone": "%s",
                   "password": "Qwerty123!"
                 }
-                """.formatted(customerEmail));
+                """.formatted(customerPhone));
         assertThat(registerCustomerResponse.statusCode()).isEqualTo(HttpStatus.CREATED.value());
 
         JsonNode registeredCustomer = objectMapper.readTree(registerCustomerResponse.body());
         String customerToken = registeredCustomer.get("accessToken").asText();
         assertThat(customerToken).isNotBlank();
-        assertThat(registeredCustomer.at("/user/email").asText()).isEqualTo(customerEmail);
+        assertThat(registeredCustomer.at("/user/phone").asText()).isEqualTo(customerPhone);
         assertThat(registeredCustomer.at("/user/role").asText()).isEqualTo(UserRole.CUSTOMER.name());
 
         HttpResponse<String> meResponse = sendGet("/users/me", customerToken);
         assertThat(meResponse.statusCode()).isEqualTo(HttpStatus.OK.value());
-        assertThat(objectMapper.readTree(meResponse.body()).get("email").asText()).isEqualTo(customerEmail);
+        assertThat(objectMapper.readTree(meResponse.body()).get("phone").asText()).isEqualTo(customerPhone);
 
         HttpResponse<String> anonymousUsersResponse = sendGet("/users", null);
         assertThat(anonymousUsersResponse.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
@@ -98,14 +97,14 @@ class ApplicationE2ETest {
 
         userRepository.save(new User(
                 "Admin E2E",
-                "admin.e2e@example.com",
+                "7000000006",
                 passwordEncoder.encode("Qwerty123!"),
                 UserRole.ADMIN,
                 LocalDateTime.now()));
 
         HttpResponse<String> loginAdminResponse = sendPost("/auth/login", null, """
                 {
-                  "email": "admin.e2e@example.com",
+                  "phone": "7000000006",
                   "password": "Qwerty123!"
                 }
                 """);
@@ -114,8 +113,8 @@ class ApplicationE2ETest {
 
         HttpResponse<String> createCourierResponse = sendPost("/users", adminToken, """
                 {
-                  "name": "Courier E2E",
-                  "email": "courier.e2e@example.com",
+                  "username": "Courier E2E",
+                  "phone": "7000000007",
                   "password": "Qwerty123!",
                   "role": "COURIER"
                 }
@@ -131,19 +130,19 @@ class ApplicationE2ETest {
 
         HttpResponse<String> duplicateRegisterResponse = sendPost("/auth/register", null, """
                 {
-                  "name": "Duplicate Customer",
-                  "email": "%s",
+                  "username": "Duplicate Customer",
+                  "phone": "%s",
                   "password": "Qwerty123!"
                 }
-                """.formatted(customerEmail));
+                """.formatted(customerPhone));
         assertThat(duplicateRegisterResponse.statusCode()).isEqualTo(HttpStatus.CONFLICT.value());
         assertThat(objectMapper.readTree(duplicateRegisterResponse.body()).get("code").asText())
                 .isEqualTo(ApiErrorCode.RESOURCE_ALREADY_EXISTS.name());
 
         HttpResponse<String> invalidRegisterResponse = sendPost("/auth/register", null, """
                 {
-                  "name": "",
-                  "email": "not-an-email",
+                  "username": "",
+                  "phone": "not-a-phone",
                   "password": "123"
                 }
                 """);

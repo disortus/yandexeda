@@ -1,22 +1,21 @@
 package com.example.demo.web;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import java.time.Clock;
 import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import static org.mockito.ArgumentMatchers.any;
 import org.mockito.Mock;
+import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.example.demo.controller.UserController;
@@ -47,14 +46,14 @@ class UserControllerWebMvcTest {
         when(userService.getById(42L)).thenReturn(new UserResponse(
                 42L,
                 "Alice",
-                "alice@example.com",
+                "7012345678",
                 UserRole.CUSTOMER,
                 LocalDateTime.parse("2026-04-28T20:00:00")));
 
         mockMvc.perform(get("/users/42"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(42))
-                .andExpect(jsonPath("$.email").value("alice@example.com"))
+                .andExpect(jsonPath("$.phone").value("7012345678"))
                 .andExpect(jsonPath("$.role").value(UserRole.CUSTOMER.name()));
     }
 
@@ -63,14 +62,14 @@ class UserControllerWebMvcTest {
         when(userService.createByAdmin(any())).thenReturn(new UserResponse(
                 10L,
                 "Courier",
-                "courier@example.com",
+                "7011111111",
                 UserRole.COURIER,
                 LocalDateTime.parse("2026-04-28T21:00:00")));
 
         String payload = """
                 {
-                  "name": "Courier",
-                  "email": "courier@example.com",
+                  "username": "Courier",
+                  "phone": "7011111111",
                   "password": "Qwerty123!",
                   "role": "COURIER"
                 }
@@ -81,7 +80,7 @@ class UserControllerWebMvcTest {
                         .content(payload))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(10))
-                .andExpect(jsonPath("$.email").value("courier@example.com"))
+                .andExpect(jsonPath("$.phone").value("7011111111"))
                 .andExpect(jsonPath("$.role").value(UserRole.COURIER.name()));
     }
 
@@ -89,8 +88,8 @@ class UserControllerWebMvcTest {
     void createShouldReturnStructuredValidationErrorForInvalidPayload() throws Exception {
         String payload = """
                 {
-                  "name": "",
-                  "email": "bad-email",
+                  "username": "",
+                  "phone": "bad-phone",
                   "password": "123",
                   "role": null
                 }

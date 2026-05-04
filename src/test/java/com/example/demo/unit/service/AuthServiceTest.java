@@ -57,8 +57,8 @@ class AuthServiceTest {
         when(clock.getZone()).thenReturn(ZoneOffset.UTC);
 
         RegisterRequest request = new RegisterRequest();
-        request.setName("Alice");
-        request.setEmail("Alice@Example.com");
+        request.setUsername("Alice");
+        request.setPhone("7012345678");
         request.setPassword("Qwerty123!");
 
         when(passwordEncoder.encode("Qwerty123!")).thenReturn("hash");
@@ -76,25 +76,25 @@ class AuthServiceTest {
         verify(userRepository).save(userCaptor.capture());
         User saved = userCaptor.getValue();
 
-        assertThat(saved.getEmail()).isEqualTo("alice@example.com");
+        assertThat(saved.getPhone()).isEqualTo("7012345678");
         assertThat(saved.getRole()).isEqualTo(UserRole.CUSTOMER);
         assertThat(saved.getPasswordHash()).isEqualTo("hash");
 
         assertThat(response.accessToken()).isEqualTo("jwt-token");
-        assertThat(response.user().email()).isEqualTo("alice@example.com");
+        assertThat(response.user().phone()).isEqualTo("7012345678");
         assertThat(response.user().role()).isEqualTo(UserRole.CUSTOMER);
     }
 
     @Test
     void loginShouldReturnTokenWhenCredentialsAreValid() {
         LoginRequest request = new LoginRequest();
-        request.setEmail("alice@example.com");
+        request.setPhone("7012345678");
         request.setPassword("Qwerty123!");
 
-        User user = new User("Alice", "alice@example.com", "hash", UserRole.CUSTOMER, LocalDateTime.now());
+        User user = new User("Alice", "7012345678", "hash", UserRole.CUSTOMER, LocalDateTime.now());
         user.setId(1L);
 
-        when(userRepository.findByEmailIgnoreCase("alice@example.com")).thenReturn(Optional.of(user));
+        when(userRepository.findByPhone("7012345678")).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("Qwerty123!", "hash")).thenReturn(true);
         when(jwtService.generateAccessToken(user)).thenReturn("jwt-token");
         when(jwtService.extractExpiration("jwt-token")).thenReturn(Instant.parse("2026-04-28T21:00:00Z"));
@@ -108,12 +108,12 @@ class AuthServiceTest {
     @Test
     void loginShouldThrowWhenPasswordDoesNotMatch() {
         LoginRequest request = new LoginRequest();
-        request.setEmail("alice@example.com");
+        request.setPhone("7012345678");
         request.setPassword("WrongPass123!");
 
-        User user = new User("Alice", "alice@example.com", "hash", UserRole.CUSTOMER, LocalDateTime.now());
+        User user = new User("Alice", "7012345678", "hash", UserRole.CUSTOMER, LocalDateTime.now());
 
-        when(userRepository.findByEmailIgnoreCase("alice@example.com")).thenReturn(Optional.of(user));
+        when(userRepository.findByPhone("7012345678")).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("WrongPass123!", "hash")).thenReturn(false);
 
         assertThatThrownBy(() -> authService.login(request))

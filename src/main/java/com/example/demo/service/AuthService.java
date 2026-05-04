@@ -18,7 +18,6 @@ import com.example.demo.enums.UserRole;
 import com.example.demo.exception.UnauthorizedException;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.JwtService;
-import com.example.demo.utils.EmailUtils;
 import com.example.demo.validator.UserValidator;
 
 @Service
@@ -44,12 +43,12 @@ public class AuthService {
 
     @Transactional
     public AuthResponse register(RegisterRequest request) {
-        String normalizedEmail = EmailUtils.normalize(request.getEmail());
-        userValidator.validateEmailUniqueness(normalizedEmail, request.getEmail());
+        String phone = request.getPhone().trim();
+        userValidator.validatePhoneUniqueness(phone);
 
         User user = new User();
-        user.setName(request.getName().trim());
-        user.setEmail(normalizedEmail);
+        user.setUsername(request.getUsername().trim());
+        user.setPhone(phone);
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         user.setRole(UserRole.CUSTOMER);
         user.setCreatedAt(LocalDateTime.now(clock));
@@ -60,8 +59,8 @@ public class AuthService {
 
     @Transactional(readOnly = true)
     public AuthResponse login(LoginRequest request) {
-        String normalizedEmail = EmailUtils.normalize(request.getEmail());
-        User user = userRepository.findByEmailIgnoreCase(normalizedEmail)
+        String phone = request.getPhone().trim();
+        User user = userRepository.findByPhone(phone)
                 .orElseThrow(() -> new UnauthorizedException("Invalid credentials"));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
@@ -79,6 +78,6 @@ public class AuthService {
                 token,
                 TokenType.BEARER,
                 expiresAt,
-                new UserResponse(user.getId(), user.getName(), user.getEmail(), user.getRole(), user.getCreatedAt()));
+                new UserResponse(user.getId(), user.getUsername(), user.getPhone(), user.getRole(), user.getCreatedAt()));
     }
 }

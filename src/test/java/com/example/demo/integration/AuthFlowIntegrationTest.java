@@ -43,8 +43,8 @@ class AuthFlowIntegrationTest {
     void registerThenGetMeShouldWork() throws Exception {
         String registerPayload = """
                 {
-                  "name": "Alice",
-                  "email": "alice@example.com",
+                  "username": "Alice",
+                  "phone": "7012345678",
                   "password": "Qwerty123!"
                 }
                 """;
@@ -54,7 +54,7 @@ class AuthFlowIntegrationTest {
                         .content(registerPayload))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.accessToken").isString())
-                .andExpect(jsonPath("$.user.email").value("alice@example.com"))
+                .andExpect(jsonPath("$.user.phone").value("7012345678"))
                 .andReturn();
 
         String token = JsonPath.parse(registerResult.getResponse().getContentAsString())
@@ -63,6 +63,6 @@ class AuthFlowIntegrationTest {
         mockMvc.perform(get("/users/me")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.email").value("alice@example.com"));
+                .andExpect(jsonPath("$.phone").value("7012345678"));
     }
 }

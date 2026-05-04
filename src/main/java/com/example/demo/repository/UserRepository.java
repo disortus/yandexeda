@@ -11,9 +11,9 @@ import com.example.demo.enums.UserRole;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    boolean existsByEmailIgnoreCase(String email);
+    boolean existsByPhone(String phone);
 
-    Optional<User> findByEmailIgnoreCase(String email);
+    Optional<User> findByPhone(String phone);
 
     List<User> findByRole(UserRole role);
 }

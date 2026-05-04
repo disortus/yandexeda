@@ -13,9 +13,9 @@ public class UserValidator {
         this.repo = repo;
     }
 
-    public void validateEmailUniqueness(String normalizedEmail, String originalEmail) {
-        if (repo.existsByEmailIgnoreCase(normalizedEmail)) {
-            throw new ResourceAlreadyExistsException("User with email '" + originalEmail + "' already exists");
+    public void validatePhoneUniqueness(String phone) {
+        if (repo.existsByPhone(phone)) {
+            throw new ResourceAlreadyExistsException("User with phone '" + phone + "' already exists");
         }
     }
 }

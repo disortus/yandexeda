@@ -23,15 +23,17 @@ import com.example.demo.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/orders")
-@RequiredArgsConstructor
 @Tag(name = "Orders", description = "API для управления заказами")
 public class OrderController {
 
     private final OrderService orderService;
+
+    public OrderController(OrderService orderService) {
+        this.orderService = orderService;
+    }
 
     @GetMapping
     @Operation(summary = "Получить список всех заказов")

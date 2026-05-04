@@ -10,7 +10,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.repository.UserRepository;
-import com.example.demo.utils.EmailUtils;
 
 @Service
 public class AppUserDetailsService implements UserDetailsService {
@@ -22,11 +21,11 @@ public class AppUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        com.example.demo.entity.User user = userRepository.findByEmailIgnoreCase(EmailUtils.normalize(username))
-                .orElseThrow(() -> new UsernameNotFoundException("User with email '" + username + "' not found"));
+        com.example.demo.entity.User user = userRepository.findByPhone(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User with phone '" + username + "' not found"));
 
         return new User(
-                user.getEmail(),
+                user.getPhone(),
                 user.getPasswordHash(),
                 List.of(new SimpleGrantedAuthority(user.getRole().asAuthority())));
     }

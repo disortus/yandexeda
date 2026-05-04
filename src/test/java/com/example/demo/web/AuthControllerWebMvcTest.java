@@ -47,15 +47,15 @@ class AuthControllerWebMvcTest {
                 "jwt-token",
                 TokenType.BEARER,
                 LocalDateTime.parse("2026-04-28T21:00:00"),
-                new UserResponse(1L, "Alice", "alice@example.com", UserRole.CUSTOMER,
+                new UserResponse(1L, "Alice", "7012345678", UserRole.CUSTOMER,
                         LocalDateTime.parse("2026-04-28T20:00:00")));
 
         when(authService.register(any())).thenReturn(authResponse);
 
         String payload = """
                 {
-                  "name": "Alice",
-                  "email": "alice@example.com",
+                  "username": "Alice",
+                  "phone": "7012345678",
                   "password": "Qwerty123!"
                 }
                 """;
@@ -66,15 +66,15 @@ class AuthControllerWebMvcTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.accessToken").value("jwt-token"))
                 .andExpect(jsonPath("$.tokenType").value("BEARER"))
-                .andExpect(jsonPath("$.user.email").value("alice@example.com"));
+                .andExpect(jsonPath("$.user.phone").value("7012345678"));
     }
 
     @Test
     void registerShouldReturnBadRequestForInvalidPayload() throws Exception {
         String payload = """
                 {
-                  "name": "",
-                  "email": "bad-email",
+                  "username": "",
+                  "phone": "bad-phone",
                   "password": "123"
                 }
                 """;

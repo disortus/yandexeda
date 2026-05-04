@@ -3,7 +3,6 @@ package com.example.demo.dto;
 import com.example.demo.enums.UserRole;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -11,16 +10,15 @@ import jakarta.validation.constraints.Size;
 
 @Schema(description = "Запрос на создание пользователя администратором")
 public class UserCreateRequest {
-    @Schema(description = "Имя пользователя", example = "Alice Johnson")
-    @NotBlank(message = "Name is required")
-    @Size(min = 2, max = 50, message = "Name must be between 2 and 50 characters")
-    private String name;
+    @Schema(description = "Имя пользователя", example = "alice")
+    @NotBlank(message = "Username is required")
+    @Size(min = 2, max = 50, message = "Username must be between 2 and 50 characters")
+    private String username;
 
-    @Schema(description = "Email пользователя", example = "alice@example.com")
-    @NotBlank(message = "Email is required")
-    @Email(message = "Email must be valid")
-    @Size(max = 120, message = "Email must not exceed 120 characters")
-    private String email;
+    @Schema(description = "Телефон пользователя (10 цифр)", example = "7012345678")
+    @NotBlank(message = "Phone is required")
+    @Pattern(regexp = "^\\d{10}$", message = "Phone must contain exactly 10 digits")
+    private String phone;
 
     @Schema(description = "Пароль. Минимум 8 символов, 1 заглавная, 1 строчная, 1 цифра, 1 спецсимвол", example = "Qwerty123!")
     @NotBlank(message = "Password is required")
@@ -32,20 +30,20 @@ public class UserCreateRequest {
     @NotNull(message = "Role is required")
     private UserRole role;
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public String getEmail() {
-        return email;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public String getPassword() {

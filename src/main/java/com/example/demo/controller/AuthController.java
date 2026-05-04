@@ -34,12 +34,12 @@ public class AuthController {
 
     @Operation(
             summary = "Регистрация нового CUSTOMER",
-            description = "Создаёт нового пользователя с ролью CUSTOMER, нормализует email, сохраняет BCrypt-хэш пароля и сразу возвращает JWT access token для дальнейших защищённых запросов.")
+            description = "Создаёт нового пользователя с ролью CUSTOMER, сохраняет BCrypt-хэш пароля и сразу возвращает JWT access token для дальнейших защищённых запросов.")
     @SecurityRequirements
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Пользователь зарегистрирован", content = @Content(mediaType = "application/json", schema = @Schema(implementation = AuthResponse.class))),
             @ApiResponse(responseCode = "400", description = "Ошибка Bean Validation во входном JSON", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))),
-            @ApiResponse(responseCode = "409", description = "Пользователь с таким email уже существует", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class)))
+            @ApiResponse(responseCode = "409", description = "Пользователь с таким phone уже существует", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
@@ -48,12 +48,12 @@ public class AuthController {
 
     @Operation(
             summary = "Вход в систему",
-            description = "Проверяет email и пароль. При успехе возвращает новый JWT access token; при неверном email или пароле возвращает одинаковый 401, чтобы не раскрывать существование аккаунта.")
+            description = "Проверяет phone и пароль. При успехе возвращает новый JWT access token; при неверных данных возвращает одинаковый 401, чтобы не раскрывать существование аккаунта.")
     @SecurityRequirements
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Успешный вход", content = @Content(mediaType = "application/json", schema = @Schema(implementation = AuthResponse.class))),
             @ApiResponse(responseCode = "400", description = "Ошибка Bean Validation во входном JSON", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))),
-            @ApiResponse(responseCode = "401", description = "Неверный email или пароль", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class)))
+            @ApiResponse(responseCode = "401", description = "Неверный phone или пароль", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
