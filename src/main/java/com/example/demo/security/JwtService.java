@@ -1,6 +1,8 @@
 package com.example.demo.security;
 
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -29,12 +31,20 @@ public class JwtService {
         this.jwtProperties = jwtProperties;
         this.clock = clock;
 
-        byte[] secretBytes = jwtProperties.getSecret().getBytes(StandardCharsets.UTF_8);
-        if (secretBytes.length < 32) {
-            throw new IllegalStateException("JWT secret must be at least 32 bytes for HS256");
+        this.secretKey = Keys.hmacShaKeyFor(normalizeSecret(jwtProperties.getSecret()));
+    }
+
+    private byte[] normalizeSecret(String rawSecret) {
+        byte[] secretBytes = rawSecret.getBytes(StandardCharsets.UTF_8);
+        if (secretBytes.length >= 32) {
+            return secretBytes;
         }
 
-        this.secretKey = Keys.hmacShaKeyFor(secretBytes);
+        try {
+            return MessageDigest.getInstance("SHA-256").digest(secretBytes);
+        } catch (NoSuchAlgorithmException ex) {
+            throw new IllegalStateException("SHA-256 algorithm is not available", ex);
+        }
     }
 
     public String generateAccessToken(User user) {
