@@ -4,12 +4,14 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,6 +20,7 @@ import com.example.demo.dto.OrderResponse;
 import com.example.demo.entity.Order;
 import com.example.demo.enums.OrderStatus;
 import com.example.demo.filter.OrderFilter;
+import com.example.demo.security.JwtService;
 import com.example.demo.service.OrderService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,9 +33,11 @@ import jakarta.validation.Valid;
 public class OrderController {
 
     private final OrderService orderService;
+    private final JwtService jwtService;
 
-    public OrderController(OrderService orderService) {
+    public OrderController(OrderService orderService, JwtService jwtService) {
         this.orderService = orderService;
+        this.jwtService = jwtService;
     }
 
     @GetMapping
@@ -52,9 +57,22 @@ public class OrderController {
 
     @PostMapping
     @Operation(summary = "Создать новый заказ")
-    public ResponseEntity<OrderResponse> create(@Valid @RequestBody OrderCreateRequest request) {
-        Order order = orderService.createOrder(request);
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<OrderResponse> create(
+            @RequestHeader("Authorization") String authorization,
+            @Valid @RequestBody OrderCreateRequest request) {
+        Long customerId = extractUserId(authorization);
+        Order order = orderService.createOrder(customerId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(OrderResponse.fromEntity(order));
+    }
+
+    private Long extractUserId(String authorization) {
+        String token = authorization.substring(7).trim();
+        Long userId = jwtService.extractUserId(token);
+        if (userId == null) {
+            throw new IllegalStateException("JWT does not contain userId claim");
+        }
+        return userId;
     }
 
     @PatchMapping("/{id}/status")

@@ -16,6 +16,8 @@ import com.example.demo.entity.Restaurant;
 import com.example.demo.entity.User;
 import com.example.demo.enums.OrderStatus;
 import com.example.demo.enums.UserRole;
+import com.example.demo.exception.BusinessValidationException;
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.filter.OrderFilter;
 import com.example.demo.repository.AddressRepository;
 import com.example.demo.repository.MenuItemRepository;
@@ -58,21 +60,31 @@ public class OrderService {
     }
 
     @Transactional
-    public Order createOrder(OrderCreateRequest request) {
-        User customer = userRepository.findById(request.customerId())
-                .orElseThrow(() -> new RuntimeException("Customer not found"));
+    public Order createOrder(Long customerId, OrderCreateRequest request) {
+        User customer = userRepository.findById(customerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Customer with id " + customerId + " not found"));
         
         Restaurant restaurant = restaurantRepository.findById(request.restaurantId())
-                .orElseThrow(() -> new RuntimeException("Restaurant not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Restaurant with id " + request.restaurantId() + " not found"));
         
         Address deliveryAddress = addressRepository.findById(request.deliveryAddressId())
-                .orElseThrow(() -> new RuntimeException("Delivery address not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Delivery address with id " + request.deliveryAddressId() + " not found"));
+
+        if (deliveryAddress.getUser() == null || !deliveryAddress.getUser().getId().equals(customer.getId())) {
+            throw new BusinessValidationException("Delivery address does not belong to current user");
+        }
 
         // Create order items
         List<OrderItem> orderItems = request.items().stream()
                 .map(itemRequest -> {
                     MenuItem menuItem = menuItemRepository.findById(itemRequest.getMenuItemId())
-                            .orElseThrow(() -> new RuntimeException("Menu item not found"));
+                            .orElseThrow(() -> new ResourceNotFoundException("Menu item with id " + itemRequest.getMenuItemId() + " not found"));
+
+                    if (!menuItem.getRestaurant().getId().equals(restaurant.getId())) {
+                        throw new BusinessValidationException(
+                                "Menu item with id " + menuItem.getId() + " does not belong to restaurant " + restaurant.getId());
+                    }
+
                     return new OrderItem(null, menuItem, itemRequest.getQuantity(), menuItem.getPrice());
                 })
                 .toList();
@@ -117,7 +129,7 @@ public class OrderService {
     @Transactional
     public Order updateStatus(Long orderId, OrderStatus status) {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Order with id " + orderId + " not found"));
         order.setStatus(status);
         return orderRepository.save(order);
     }

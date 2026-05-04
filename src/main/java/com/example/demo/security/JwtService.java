@@ -56,9 +56,21 @@ public class JwtService {
                 .issuer(jwtProperties.getIssuer())
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(expiresAt))
+                .claim("userId", user.getId())
                 .claim("roles", List.of(user.getRole().name()))
                 .signWith(secretKey)
                 .compact();
+    }
+
+    public Long extractUserId(String token) {
+        Object raw = extractAllClaims(token).get("userId");
+        if (raw == null) {
+            return null;
+        }
+        if (raw instanceof Number number) {
+            return number.longValue();
+        }
+        return Long.parseLong(raw.toString());
     }
 
     public String extractUsername(String token) {
