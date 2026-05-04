@@ -3,8 +3,12 @@ package com.example.demo.entity;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import com.example.demo.enums.OrderStatus;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -55,7 +59,7 @@ public class Order {
     public Order() {
     }
 
-    public Order(User customer, User courier, Restaurant restaurant, Address deliveryAddress, String status, BigDecimal totalPrice) {
+    public Order(User customer, User courier, Restaurant restaurant, Address deliveryAddress, OrderStatus status, BigDecimal totalPrice) {
         this.customer = customer;
         this.courier = courier;
         this.restaurant = restaurant;
@@ -100,11 +104,11 @@ public class Order {
         this.deliveryAddress = deliveryAddress;
     }
 
-    public String getStatus() {
+    public OrderStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(OrderStatus status) {
         this.status = status;
     }
 
