@@ -1,14 +1,17 @@
 package com.example.demo.specification;
 
-import com.example.demo.entity.User;
-import com.example.demo.filter.UserFilter;
-import org.springframework.data.jpa.domain.Specification;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.data.jpa.domain.Specification;
+
+import com.example.demo.entity.User;
+import com.example.demo.filter.UserFilter;
+
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 
 public class UserSpecification {
     public static Specification<User> fromFilter(UserFilter f){
@@ -32,7 +35,7 @@ public class UserSpecification {
                     }
 
                     if(f.getRole() != null){
-                        predicates.add(cb.equal(root.get("role"), + f.getRole()));
+                        predicates.add(cb.equal(root.get("role"), f.getRole()));
                     }
 
                     return cb.and(predicates.toArray(new Predicate[0]));

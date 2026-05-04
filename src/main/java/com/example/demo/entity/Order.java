@@ -1,3 +1,19 @@
+package com.example.demo.entity;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
+
+
 @Entity
 @Table(name="orders")
 public class Order {
@@ -21,7 +37,7 @@ public class Order {
     @JoinColumn(name = "delivery_address_id", nullable = false)
     private DeliveryAddress deliveryAddress;
 
-    @Column(defaultValue = "pending", nullable = false)
+    @Column(defaultValue = "pending", nullable = false) // у Column нет такого значения как defaultValue
     private String status;
 
     @Column(nullable = false, precision = 10, scale = 2)

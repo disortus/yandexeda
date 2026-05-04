@@ -1,14 +1,17 @@
 package com.example.demo.specification;
 
-import com.example.demo.entity.Order;
-import com.example.demo.filter.OrderFilter;
-import org.springframework.data.jpa.domain.Specification;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.data.jpa.domain.Specification;
+
+import com.example.demo.entity.Order;
+import com.example.demo.filter.OrderFilter;
+
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 
 public class OrderSpecification {
     public static Specification<Order> fromFilter(OrderFilter f){
@@ -26,17 +29,17 @@ public class OrderSpecification {
                         predicates.add(cb.equal(root.get("status"), f.getStatus()));
                     }
 
-                    if (f.getMinPrice() != null) {
+                    if (f.getMinTotalPrice() != null) {
                         predicates.add(cb.greaterThanOrEqualTo(
                                 root.get("price"),
-                                f.getMinPrice()
+                                f.getMinTotalPrice()
                         ));
                     }
 
-                    if (f.getMaxPrice() != null) {
+                    if (f.getMaxTotalPrice() != null) {
                         predicates.add(cb.lessThanOrEqualTo(
                                 root.get("price"),
-                                f.getMaxPrice()
+                                f.getMaxTotalPrice()
                         ));
                     }
 

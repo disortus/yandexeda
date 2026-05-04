@@ -1,16 +1,17 @@
 package com.example.demo.specification;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.data.jpa.domain.Specification;
+
 import com.example.demo.entity.Restaurant;
 import com.example.demo.filter.RestaurantFilter;
 
-import org.springframework.data.jpa.domain.Specification;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.CriteriaBuilder;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class RestaurantSpecification {
 
@@ -21,10 +22,10 @@ public class RestaurantSpecification {
 
             List<Predicate> predicates = new ArrayList<>();
 
-            if (f.getName != null){
+            if (f.getNameSearch() != null){
                 predicates.add(cb.like(
                     cb.lower(root.get("name")),
-                    "%" + f.getName().toLowerCase() + "%"
+                    "%" + f.getNameSearch().toLowerCase() + "%"
                 ));
             }
 

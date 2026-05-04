@@ -1,14 +1,17 @@
 package com.example.demo.specification;
 
-import com.example.demo.entity.Address;
-import com.example.demo.filter.AddressFilter;
-import org.springframework.data.jpa.domain.Specification;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.data.jpa.domain.Specification;
+
+import com.example.demo.entity.Address;
+import com.example.demo.filter.AddressFilter;
+
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 
 public class AddressSpecification {
     public static Specification<Address> fromFilter(AddressFilter f){
