@@ -21,7 +21,11 @@ public class AddressSpecification {
                     List<Predicate> predicates = new ArrayList<>();
 
                     if(f.getUserId() != null) {
-                        predicates.add(cb.equal(root.get("userId"), f.getUserId()));
+                        predicates.add(cb.equal(root.get("user").get("id"), f.getUserId()));
+                    }
+
+                    if (f.getRestaurantId() != null) {
+                        predicates.add(cb.equal(root.get("restaurant").get("id"), f.getRestaurantId()));
                     }
 
                     if(f.getAddressTextSearch() != null){

@@ -35,9 +35,12 @@ public class AddressService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User with id " + userId + " not found"));
 
-        Restaurant restaurant = restaurantRepository.findById(request.getRestaurantId())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Restaurant with id " + request.getRestaurantId() + " not found"));
+        Restaurant restaurant = null;
+        if (request.getRestaurantId() != null) {
+            restaurant = restaurantRepository.findById(request.getRestaurantId())
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            "Restaurant with id " + request.getRestaurantId() + " not found"));
+        }
 
         Address address = new Address();
         address.setUser(user);

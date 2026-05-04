@@ -1,14 +1,17 @@
 package com.example.demo.specification;
 
-import com.example.demo.entity.Review;
-import com.example.demo.filter.ReviewFilter;
-import org.springframework.data.jpa.domain.Specification;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.data.jpa.domain.Specification;
+
+import com.example.demo.entity.Review;
+import com.example.demo.filter.ReviewFilter;
+
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 
 public class ReviewSpecification {
     public static Specification<Review> fromFilter(ReviewFilter f){
@@ -18,15 +21,15 @@ public class ReviewSpecification {
                     List<Predicate> predicates = new ArrayList<>();
 
                     if(f.getUserId() != null) {
-                        predicates.add(cb.equal(root.get("userId"), f.getUserId()));
+                        predicates.add(cb.equal(root.get("user").get("id"), f.getUserId()));
                     }
 
                     if (f.getRestaurantId() != null){
-                        predicates.add(cb.equal(root.get("restaurantId"), f.getRestaurantId()));
+                        predicates.add(cb.equal(root.get("restaurant").get("id"), f.getRestaurantId()));
                     }
 
                     if (f.getMenuItemId() != null){
-                        predicates.add(cb.equal(root.get("menuItemId"), f.getMenuItemId()));
+                        predicates.add(cb.equal(root.get("menuItem").get("id"), f.getMenuItemId()));
                     }
 
                     if (f.getMinRating() != null) {

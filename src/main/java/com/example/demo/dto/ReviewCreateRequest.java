@@ -16,8 +16,7 @@ public class ReviewCreateRequest {
     @NotNull(message = "Restaurant ID is required")
     private Long restaurantId;
 
-    @Schema(description = "ID блюда", example = "1")
-    @NotNull(message = "Menu item ID is required")
+    @Schema(description = "ID блюда (опционально)", example = "1")
     private Long menuItemId;
 
     @Schema(description = "Рейтинг (1-5)", example = "5")

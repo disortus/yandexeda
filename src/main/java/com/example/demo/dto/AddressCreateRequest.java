@@ -8,8 +8,7 @@ import jakarta.validation.constraints.NotNull;
 
 @Schema(description = "Запрос на создание адреса доставки")
 public class AddressCreateRequest {
-    @Schema(description = "ID ресторана", example = "1")
-    @NotNull(message = "Restaurant ID is required")
+    @Schema(description = "ID ресторана (для адреса ресторана; опционально)", example = "1")
     private Long restaurantId;
 
     @Schema(description = "Текст адреса", example = "ул. Ленина, дом 5, кв. 12")

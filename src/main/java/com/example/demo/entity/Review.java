@@ -30,7 +30,7 @@ public class Review {
     private Restaurant restaurant;
 
     @ManyToOne
-    @JoinColumn(name = "menu_item_id", nullable = false)
+    @JoinColumn(name = "menu_item_id")
     private MenuItem menuItem;
 
     @Min(1)

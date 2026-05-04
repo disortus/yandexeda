@@ -13,7 +13,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name="adresses")
+@Table(name="addresses")
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,7 +30,7 @@ public class Address {
     @Column(name = "address_text", nullable = false)
     private String addressText;
 
-    @Column(columnDefinition = "geography(Point,4326)")
+    @Column(columnDefinition = "geography(POINT,4326)")
     private Point location;
 
     public Address() {

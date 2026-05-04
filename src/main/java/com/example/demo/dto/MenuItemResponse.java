@@ -2,6 +2,8 @@ package com.example.demo.dto;
 
 import java.math.BigDecimal;
 
+import com.example.demo.entity.MenuItem;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "DTO блюда в ответе API")
@@ -20,4 +22,15 @@ public record MenuItemResponse(
         BigDecimal price,
         @Schema(description = "Доступно ли блюдо", example = "true")
         boolean isAvailable) {
+
+    public static MenuItemResponse fromEntity(MenuItem menuItem) {
+        return new MenuItemResponse(
+                menuItem.getId(),
+                menuItem.getRestaurant().getId(),
+                menuItem.getCategory() != null ? menuItem.getCategory().getId() : null,
+                menuItem.getName(),
+                menuItem.getDescription(),
+                menuItem.getPrice(),
+                menuItem.isAvailable());
+    }
 }

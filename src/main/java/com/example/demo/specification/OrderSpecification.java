@@ -1,11 +1,14 @@
 package com.example.demo.specification;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.springframework.data.jpa.domain.Specification;
 
 import com.example.demo.entity.Order;
+import com.example.demo.enums.OrderStatus;
 import com.example.demo.filter.OrderFilter;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -21,25 +24,34 @@ public class OrderSpecification {
                     
                     List<Predicate> predicates = new ArrayList<>();
 
+                    if (f == null) {
+                        return cb.and(predicates.toArray(new Predicate[0]));
+                    }
+
                     if (f.getRestaurantId() != null){
-                        predicates.add(cb.equal(root.get("restaurantId"), f.getRestaurantId()));
+                        predicates.add(cb.equal(root.get("restaurant").get("id"), f.getRestaurantId()));
                     }
 
                     if (f.getStatus() != null){
-                        predicates.add(cb.equal(root.get("status"), f.getStatus()));
+                        try {
+                            OrderStatus status = OrderStatus.valueOf(f.getStatus().trim().toUpperCase(Locale.ROOT));
+                            predicates.add(cb.equal(root.get("status"), status));
+                        } catch (IllegalArgumentException ignored) {
+                            predicates.add(cb.disjunction());
+                        }
                     }
 
                     if (f.getMinTotalPrice() != null) {
                         predicates.add(cb.greaterThanOrEqualTo(
-                                root.get("price"),
-                                f.getMinTotalPrice()
+                                root.get("totalPrice"),
+                                BigDecimal.valueOf(f.getMinTotalPrice())
                         ));
                     }
 
                     if (f.getMaxTotalPrice() != null) {
                         predicates.add(cb.lessThanOrEqualTo(
-                                root.get("price"),
-                                f.getMaxTotalPrice()
+                                root.get("totalPrice"),
+                                BigDecimal.valueOf(f.getMaxTotalPrice())
                         ));
                     }
 

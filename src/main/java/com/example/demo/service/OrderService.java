@@ -1,9 +1,11 @@
 package com.example.demo.service;
 
 import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.geo.Point;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +21,7 @@ import com.example.demo.enums.UserRole;
 import com.example.demo.exception.BusinessValidationException;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.filter.OrderFilter;
+import com.example.demo.repository.AddressGeoProjection;
 import com.example.demo.repository.AddressRepository;
 import com.example.demo.repository.MenuItemRepository;
 import com.example.demo.repository.OrderItemRepository;
@@ -29,6 +32,10 @@ import com.example.demo.specification.OrderSpecification;
 
 @Service
 public class OrderService {
+
+    private static final List<OrderStatus> ACTIVE_COURIER_STATUSES = List.of(
+            OrderStatus.ASSIGNED,
+            OrderStatus.DELIVERING);
 
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
@@ -61,18 +68,17 @@ public class OrderService {
 
     @Transactional
     public Order createOrder(Long customerId, OrderCreateRequest request) {
+        if (request.items() == null || request.items().isEmpty()) {
+            throw new BusinessValidationException("Order must contain at least one item");
+        }
+
         User customer = userRepository.findById(customerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer with id " + customerId + " not found"));
         
         Restaurant restaurant = restaurantRepository.findById(request.restaurantId())
                 .orElseThrow(() -> new ResourceNotFoundException("Restaurant with id " + request.restaurantId() + " not found"));
         
-        Address deliveryAddress = addressRepository.findById(request.deliveryAddressId())
-                .orElseThrow(() -> new ResourceNotFoundException("Delivery address with id " + request.deliveryAddressId() + " not found"));
-
-        if (deliveryAddress.getUser() == null || !deliveryAddress.getUser().getId().equals(customer.getId())) {
-            throw new BusinessValidationException("Delivery address does not belong to current user");
-        }
+        Address deliveryAddress = resolveDeliveryAddress(customer, request);
 
         // Create order items
         List<OrderItem> orderItems = request.items().stream()
@@ -113,17 +119,91 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
+    private Address resolveDeliveryAddress(User customer, OrderCreateRequest request) {
+        if (request.deliveryAddressId() != null) {
+            Address deliveryAddress = addressRepository.findById(request.deliveryAddressId())
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            "Delivery address with id " + request.deliveryAddressId() + " not found"));
+
+            if (deliveryAddress.getUser() == null || !deliveryAddress.getUser().getId().equals(customer.getId())) {
+                throw new BusinessValidationException("Delivery address does not belong to current user");
+            }
+            return deliveryAddress;
+        }
+
+        if (request.deliveryAddress() != null) {
+            Address address = new Address();
+            address.setUser(customer);
+            address.setAddressText(request.deliveryAddress().getAddressText().trim());
+            address.setLocation(new Point(request.deliveryAddress().getLng(), request.deliveryAddress().getLat()));
+            return addressRepository.save(address);
+        }
+
+        throw new BusinessValidationException("Either deliveryAddressId or deliveryAddress must be provided");
+    }
+
     private void assignNearestCourier(Order order) {
-        // Find available couriers (simplified logic - in real app would use geolocation)
+        var restaurantCoordinatesOpt = addressRepository.findRestaurantAddressWithLocation(order.getRestaurant().getId())
+                .flatMap(a -> addressRepository.findCoordinatesByAddressId(a.getId()));
+
+        var customerCoordinatesOpt = addressRepository.findCoordinatesByAddressId(order.getDeliveryAddress().getId());
+
+        if (restaurantCoordinatesOpt.isEmpty() || customerCoordinatesOpt.isEmpty()) {
+            return;
+        }
+
+        AddressGeoProjection restaurantCoordinates = restaurantCoordinatesOpt.get();
+
+        // Find available couriers
         List<User> couriers = userRepository.findByRole(UserRole.COURIER);
 
-        if (!couriers.isEmpty()) {
-            // Simple assignment: pick first available courier
-            // In production, would calculate distance between courier location and restaurant
-            User nearestCourier = couriers.get(0);
+        User nearestCourier = couriers.stream()
+                .filter(courier -> orderRepository.countByCourierIdAndStatusIn(
+                        courier.getId(),
+                        ACTIVE_COURIER_STATUSES) == 0)
+                .map(courier -> new CourierCandidate(
+                        courier,
+                        calculateCourierRestaurantDistance(courier.getId(), restaurantCoordinates)))
+                .filter(candidate -> candidate.distanceKm() != null)
+                .min(Comparator.comparing(CourierCandidate::distanceKm))
+                .map(CourierCandidate::courier)
+                .orElse(null);
+
+        if (nearestCourier != null) {
             order.setCourier(nearestCourier);
             order.setStatus(OrderStatus.ASSIGNED);
         }
+    }
+
+    private Double calculateCourierRestaurantDistance(Long courierId, AddressGeoProjection restaurantCoordinates) {
+        return addressRepository.findByUserId(courierId).stream()
+                .map(Address::getId)
+                .map(addressRepository::findCoordinatesByAddressId)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(courierCoordinates -> distanceInKm(
+                        courierCoordinates.getLat(),
+                        courierCoordinates.getLng(),
+                        restaurantCoordinates.getLat(),
+                        restaurantCoordinates.getLng()))
+                .min(Double::compareTo)
+                .orElse(null);
+    }
+
+    private double distanceInKm(double lat1, double lon1, double lat2, double lon2) {
+        final double earthRadiusKm = 6371.0;
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return earthRadiusKm * c;
+    }
+
+    private record CourierCandidate(User courier, Double distanceKm) {
     }
 
     @Transactional

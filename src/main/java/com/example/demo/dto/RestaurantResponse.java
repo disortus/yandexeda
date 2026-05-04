@@ -1,5 +1,6 @@
 package com.example.demo.dto;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -12,13 +13,16 @@ public record RestaurantResponse(
         String name,
         @Schema(description = "Описание ресторана", example = "Итальянская кухня, пицца на тонком тесте")
         String description,
+        @Schema(description = "Средний рейтинг ресторана", example = "4.75")
+        BigDecimal rating,
         @Schema(description = "Дата создания ресторана (UTC)", example = "2026-04-28T20:45:10")
         LocalDateTime createdAt) {
-    public static RestaurantResponse fromEntity(com.example.demo.entity.Restaurant restaurant) {
+    public static RestaurantResponse fromEntity(com.example.demo.entity.Restaurant restaurant, BigDecimal rating) {
         return new RestaurantResponse(
                 restaurant.getId(),
                 restaurant.getName(),
                 restaurant.getDescription(),
+                rating,
                 restaurant.getCreatedAt()
         );
     }
