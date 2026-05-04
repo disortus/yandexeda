@@ -23,11 +23,11 @@ public class Order {
 
     @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false)
-    private Customer customer;
+    private User customer;
 
     @ManyToOne
     @JoinColumn(name = "courier_id", nullable = false)
-    private Courier courier;
+    private User courier;
 
     @ManyToOne
     @JoinColumn(name = "restaurant_id", nullable = false)
