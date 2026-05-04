@@ -50,9 +50,6 @@ public class Order {
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
-        if (status == null) {
-            status = "pending";
-        }
     }
 
     public Order() {
