@@ -52,7 +52,7 @@ public class User {
         this.role = role;
     }
 
-    public User(String username, String phone, String passwordHash, UserRole role, LocalDateTime createdAt) {
+    public User(String username, String  phone, String passwordHash, UserRole role, LocalDateTime createdAt) {
         this.username = username;
         this.phone = phone;
         this.passwordHash = passwordHash;
